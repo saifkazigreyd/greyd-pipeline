@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<title>Grey.D'Studio Sales Pipeline</title>
+<style>
+:root{--ink:#3A2E28;--mut:#7A6A5E;--line:#E6DACB;--bg:#FAF7F2;--card:#fff;--acc:#B5603A;--accbg:#F5DED2;--acctx:#8A4325;--arch:#4F523B;--archbg:#E6E7DC;--drop:#7A6E64;--dropbg:#ECE6DF;--ok:#4F6B3A;--okbg:#E3EBD8;--bad:#A3392B;--badbg:#F6DDD8;--mid:#8A6420;--midbg:#F6EAD0;--sand:#EFE6DA;--olive:#6E7155}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--ink);color:#fff;padding:14px 16px 0}
+header h1{margin:0;font-size:18px;font-weight:600;letter-spacing:.2px}
+header p{margin:2px 0 10px;color:#c9c5bb;font-size:13px}
+nav{display:flex;gap:4px;overflow-x:auto}
+nav a{color:#c9c5bb;text-decoration:none;padding:9px 12px;font-size:14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav a.on{color:#fff;border-color:#d8c9a8}
+main{max-width:1440px;margin:0 auto;padding:16px}
+.banner{background:var(--midbg);color:var(--mid);padding:8px 12px;border-radius:8px;margin-bottom:12px;font-size:13px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+button,.btn{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+button.danger{color:var(--bad)}
+button.sm,.btn.sm{padding:4px 10px;font-size:13px}
+.stages{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:12px 0}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;font-size:13px;white-space:nowrap;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip b{font-weight:600;margin-left:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.pc{cursor:pointer}.pc:hover{border-color:#bdb7aa}
+.pc h3{margin:0 0 2px;font-size:16px}
+.mut{color:var(--mut);font-size:13px}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600}
+.p-sales{background:var(--accbg);color:var(--acctx)}.p-arch{background:var(--archbg);color:var(--arch)}.p-drop{background:var(--dropbg);color:var(--drop)}
+.p-ok{background:var(--okbg);color:var(--ok)}.p-bad{background:var(--badbg);color:var(--bad)}.p-mid{background:var(--midbg);color:var(--mid)}.p-n{background:#eeece6;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--mut);font-weight:600}
+.tw{overflow-x:auto}
+label.f{display:block;font-size:12px;color:var(--mut);font-weight:600;margin-top:8px}
+input,select,textarea{font:inherit;font-size:14px;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+input[type=checkbox]{width:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 10px}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
+.modal{position:fixed;inset:0;background:rgba(20,19,17,.45);display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;padding:20px 10px;z-index:5}
+.hidden{display:none}
+.sheet{background:var(--bg);border-radius:14px;width:100%;max-width:820px;padding:16px}
+details.sec{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:10px}
+details.sec>summary{padding:11px 14px;cursor:pointer;font-weight:600;list-style:none;display:flex;gap:8px;align-items:center}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary .n{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+details.sec .body{padding:0 14px 14px}
+.who{font-size:12px;font-weight:600;margin-left:auto}
+.links{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.note{background:#f1eee6;border-radius:8px;padding:8px 10px;font-size:13px;margin-top:10px}
+.flow{display:grid;gap:8px}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.step .n{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.kpi .v{font-size:22px;font-weight:600}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:9}
+h2{font-size:17px;margin:4px 0 10px}
+.empty{padding:28px;text-align:center;color:var(--mut)}
+.nbox{border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:10px;background:#fbfaf7}
+.nt{font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px}
+.nrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:5px 0;border-top:1px solid var(--line)}
+.nrow:first-of-type{border-top:0}
+.nname{flex:1;min-width:150px;font-size:14px}
+.ib{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);text-decoration:none;font-size:13px;cursor:pointer}
+.ib:hover{border-color:#bdb7aa}.ib.off{opacity:.45;cursor:default}
+.msg summary{font-size:12px;color:var(--mut);cursor:pointer;margin-top:6px}
+.msg pre{white-space:pre-wrap;font:13px/1.5 inherit;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0 0}
+
+body{font-family:Outfit,-apple-system,"Segoe UI",Roboto,sans-serif;background-color:var(--bg);background-image:linear-gradient(rgba(181,96,58,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(181,96,58,.06) 1px,transparent 1px);background-size:24px 24px}
+header{background:var(--ink);padding:16px 20px 0;border-bottom:3px solid var(--acc)}
+.brand{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-bottom:12px}
+.logo{height:64px;width:auto;display:block}
+.brand p{margin:0 0 4px!important}
+.mark{width:38px;height:38px;flex:none}
+header h1{font-family:Outfit,Arial,sans-serif;font-size:26px;font-weight:600;letter-spacing:.5px;color:var(--sand)}
+header p{color:#CDBBA6;font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin:2px 0 12px}
+nav a{color:#CDBBA6;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:10px 14px}
+nav a.on{color:#fff;border-color:var(--acc)}
+h2{font-family:Outfit,Arial,sans-serif;font-size:20px;font-weight:700;letter-spacing:0}
+.pc h3{font-family:Outfit,Arial,sans-serif;font-size:16px;font-weight:700}
+.card,details.sec,.step{border-radius:4px;border-color:var(--line);position:relative}
+.card::before,.card::after{content:"";position:absolute;width:10px;height:10px;border-color:var(--acc);border-style:solid;pointer-events:none}
+.card::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.card::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+.pc{border-top:3px solid var(--acc)}
+.pc:hover{border-color:var(--olive);border-top-color:var(--acc)}
+label.f,th,.nt,.kpi .mut{text-transform:uppercase;letter-spacing:.12em;font-size:10.5px}
+.kpi .v{font-family:Outfit,Arial,sans-serif;font-weight:700;font-size:24px;color:var(--ink)}
+button,.btn,.ib{border-radius:3px}
+button.pri{background:var(--acc);border-color:var(--acc)}
+button.pri:hover{background:#9E4F2D}
+.chip{border-radius:2px;letter-spacing:.04em}
+.chip.on{background:var(--acc);border-color:var(--acc)}
+.pill{border-radius:2px;letter-spacing:.03em}
+input,select,textarea{border-radius:3px;background:#FFFDF9}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(181,96,58,.35);border-color:var(--acc)}
+details.sec>summary{font-family:Outfit,Arial,sans-serif;font-size:15px;font-weight:600}
+details.sec>summary .n{background:var(--acc);border-radius:2px;font-family:Outfit,sans-serif}
+details.sec>summary .who{font-family:Outfit,sans-serif}
+.sheet{background:var(--bg);border-radius:4px;border-top:4px solid var(--acc)}
+.note,.nbox{background:var(--sand);border-color:var(--line)}
+.step .n{border-radius:2px}
+.banner{border-radius:3px}
+.titleblock{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--ink);padding-bottom:6px;margin-bottom:14px}
+.titleblock span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.seg2{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.seg2 button{border:0;border-radius:0;padding:7px 12px;font-size:13px;background:#fff}
+.seg2 button.on{background:var(--ink);color:#fff}
+.funnel{display:flex;gap:4px;overflow-x:auto;margin:14px 0;padding-bottom:6px}
+.ft{flex:none;min-width:96px;background:#fff;border:1px solid var(--line);padding:8px 16px 8px 18px;cursor:pointer;position:relative;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%,10px 50%);transition:background .15s}
+.ft:first-child{clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%);padding-left:12px}
+.ft b{display:block;font-size:20px;font-weight:700;color:var(--ink);line-height:1.1}
+.ft span{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.ft i{position:absolute;top:5px;right:16px;font-style:normal;font-size:10px;color:var(--mut)}
+.ft:hover{background:var(--sand)}
+.ft.zero b{color:#C9BBAB}
+.ft.on{background:var(--acc);border-color:var(--acc)}.ft.on b,.ft.on span,.ft.on i{color:#fff}
+.ft.drop{background:var(--dropbg)}.ft.drop.on{background:var(--drop)}
+.ft.all{background:var(--ink)}.ft.all b,.ft.all span{color:var(--sand)}.ft.all.on{background:var(--acc)}
+.track{display:flex;gap:3px;margin:8px 0 4px}
+.track .seg{flex:1;height:6px;background:#EDE4D8;border-radius:1px}
+.track .seg.done{background:var(--olive)}
+.track .seg.cur{background:var(--acc);animation:pulse 1.6s ease-in-out infinite}
+.track .seg.drop{background:var(--drop)}
+@keyframes pulse{50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){.track .seg.cur{animation:none}}
+.sline{display:flex;gap:8px;align-items:center;margin-top:6px}
+.nxt{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--acctx);background:var(--accbg);padding:5px 8px;margin-top:8px;border-radius:2px}
+.nxt span{font-weight:700}
+.nxt.dropped{color:var(--drop);background:var(--dropbg)}
+.dprog{margin-top:8px}.dbar{display:flex;gap:3px;margin-top:3px}
+.dbar span{flex:1;height:8px;background:#EDE4D8}.dbar span.on{background:var(--ok)}.dbar span.wip{background:var(--mid)}
+.meta{margin-top:6px;font-size:13px}.meta b{color:var(--ink)}
+.pc{transition:transform .12s,box-shadow .12s}
+.pc:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(58,46,40,.10)}
+.board{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+.col{flex:none;width:230px;background:rgba(239,230,218,.55);border:1px dashed var(--line);padding:8px;min-height:180px}
+.col.dcol{background:rgba(236,230,223,.7)}
+.col.over{background:var(--accbg);border-color:var(--acc)}
+.ch{display:flex;justify-content:space-between;align-items:center}
+.cv{font-size:12px;margin:2px 0 6px}
+.pc.mini{padding:10px;margin-bottom:8px}.pc.mini h3{font-size:14px}
+.pc.mini .nxt{font-size:12px}
+.cempty{font-size:12px;color:var(--mut);text-align:center;padding:20px 0}
+.pc.dragging{opacity:.4}
+.trow{cursor:pointer}.trow:hover td{background:var(--sand)}
+.rmk{font-size:12px;max-width:340px}
+.wfil{margin-top:4px}
+#tm{z-index:7}
+select[data-k$=".status"]{min-width:160px}
+.plist{padding:4px 12px}
+.plist table{border-collapse:collapse}
+.lrow{cursor:pointer}.lrow td{padding:10px 8px;vertical-align:middle}
+.lrow:hover td{background:var(--sand)}
+.lc{min-width:170px}.ls{min-width:170px}.ls .track{margin:6px 0 0}.ls .track .seg{height:4px}
+.ln{color:var(--acctx);font-size:13px}.ln.dropped{color:var(--drop)}
+.ld{white-space:nowrap}.lv{white-space:nowrap;font-weight:600}.lt{white-space:nowrap;font-size:13px}
+.dmini{display:inline-block;width:60px;height:6px;background:#EDE4D8;margin-right:6px;vertical-align:middle}.dmini span{display:block;height:100%;background:var(--ok)}
+@media(max-width:760px){.plist thead{display:none}.plist table,.plist tbody,.plist tr,.plist td{display:block;width:100%}
+.lrow{border-bottom:1px solid var(--line);padding:8px 0;display:grid!important;grid-template-columns:1fr 1fr;gap:2px 10px}
+.lrow td{padding:2px 0!important;border:0!important}.lrow td.e{display:none!important}
+.lc{order:1}.lv{order:2;text-align:right}.ls{order:3}.ln{order:4}.ld{order:5}.lp{order:6}.lt{order:7}.ls,.ln{grid-column:1/-1}.lp{font-size:13px;color:var(--mut)}.lt{text-align:right}.ld{grid-column:1/-1}}
+.dtab tr.dim td{opacity:.55}.dtab tr.dim:hover td{opacity:1}
+tr.best td{background:var(--okbg);font-weight:600}tr.best td:first-child{box-shadow:inset 4px 0 0 var(--ok)}
+.bestp{background:var(--ok);color:#fff;margin-left:6px;white-space:nowrap}
+tr.gfirst td{border-top:2px solid var(--line)}td.gcell{background:#fff!important;vertical-align:top}
+.prop{margin-top:8px}.difft{width:auto;margin-top:6px}.difft td{border:0;padding:3px 10px 3px 0;font-size:13px}.difft s{color:var(--mut)}
+button:disabled{opacity:.5;cursor:default}
+.ptabs{display:flex;gap:0;margin:14px 0 10px;border-bottom:2px solid var(--ink)}
+.ptabs button{border:0;border-radius:3px 3px 0 0;background:transparent;padding:10px 18px;font-size:15px;font-weight:600;color:var(--mut)}
+.ptabs button.on{background:var(--ink);color:#fff}.ptabs button b{margin-left:6px;font-weight:700;color:var(--acc)}.ptabs button.on b{color:#F0C9B5}
+.lsec{background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc);margin-top:8px}
+.lsec.ldrop{border-left-color:var(--drop)}
+.lhead{display:flex;gap:10px;align-items:center;padding:11px 14px;cursor:pointer}.lhead:hover{background:var(--sand)}
+.lnum{width:22px;height:22px;background:var(--ink);color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px}
+nav{align-items:center}nav .who{margin-left:auto;color:#CDBBA6;font-size:12px;padding:0 4px 0 14px;white-space:nowrap}
+.nb{background:var(--acc);color:#fff;border-radius:9px;padding:1px 7px;font-size:11px;margin-left:4px}
+.glist{display:grid;gap:6px;margin-top:12px}.glist button{display:flex;justify-content:space-between;align-items:center;text-align:left;padding:10px 12px}
+.nlist{margin-top:8px}.nitem{padding:8px 10px;border-top:1px solid var(--line);cursor:pointer}.nitem:hover{background:var(--sand)}.nitem.un{border-left:3px solid var(--acc);background:#FFF8F3;font-weight:600}
+select.asg{padding:4px 6px;font-size:13px;max-width:190px}
+.ubox{border:1px solid var(--line);background:var(--sand);padding:12px;margin-top:14px}.pchk{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:14px}.pchk input{margin-right:6px}
+nav .who .lo{background:transparent;border:1px solid #6b5a4f;color:#CDBBA6;padding:2px 8px;font-size:11px;margin-left:8px}
+.nx{color:var(--ink);font-size:13px;margin-bottom:4px}.nx:last-child{margin-bottom:0}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><svg class="logo" viewBox="80 245 600 255" role="img" aria-label="Grey.D'Studio"><path d="M305 332V261H96V482H182" fill="none" stroke="#8CC21F" stroke-width="16"/><text x="183" y="428" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="118" fill="#EFE6DA" textLength="487" lengthAdjust="spacingAndGlyphs">GREY.D'</text><text x="190" y="490" font-family="Montserrat,Arial,sans-serif" font-weight="700" font-size="62" fill="#8CC21F" textLength="268" lengthAdjust="spacingAndGlyphs">STUDIO</text></svg><p>Sales pipeline · Architecture · Interior · Construction</p></div>
+  <nav id="nav">
+    <a href="#pipeline">Pipeline</a><a href="#work">Work list</a><a href="#dashboard">Dashboard</a><a href="#sheet-sync">Sheet sync</a><a href="#team">Team</a><a href="#process">How it works</a>
+  </nav>
+</header>
+<main id="app"></main>
+<div id="modal" class="modal hidden"><div class="sheet" id="sheet"></div></div>
+<div id="tm" class="modal hidden"><div class="sheet" style="max-width:520px" id="tmsheet"></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<script>
+/* ---------- Supabase config (publishable key is safe to be public; data is protected by row-level security) ---------- */
+const SB_URL="https://cvlpdcvuogrfwyndayle.supabase.co",SB_KEY="sb_publishable_q4wVfWcXnKwMTqn5LYBkkA_ruSGvTLy";
+/* Short user IDs (e.g. "nadia") become nadia@LOGIN_DOMAIN behind the scenes. Use a real domain your firm owns. */
+const LOGIN_DOMAIN="greydstudio.com";
+const toEmail=l=>{l=String(l||"").trim().toLowerCase();return l.includes("@")?l:l+"@"+LOGIN_DOMAIN};
+let sb=null,authUser=null;
+function makeDb(sb){return{
+  collection(name){return{onSnapshot(cb,err){const map={};let t=null,ready=false;const emit=()=>{if(ready)cb({docs:Object.entries(map).map(([id,data])=>({id,data}))})};
+    sb.channel("rt-"+name).on("postgres_changes",{event:"*",schema:"public",table:name},p=>{if(p.eventType==="DELETE"){if(p.old&&p.old.id)delete map[p.old.id]}else if(p.new&&p.new.id)map[p.new.id]=p.new.data;clearTimeout(t);t=setTimeout(emit,200)}).subscribe();
+    (async()=>{try{for(let from=0;;from+=1000){const{data,error}=await sb.from(name).select("id,data").order("id").range(from,from+999);if(error)throw error;data.forEach(r=>{map[r.id]=r.data});if(data.length<1000)break}ready=true;emit()}catch(e){err&&err(e)}})()}}},
+  doc(path){const i=path.indexOf("/"),c=path.slice(0,i),id=path.slice(i+1);return{
+    set:async o=>{const{error}=await sb.from(c).upsert({id,data:o,updated_at:new Date().toISOString()});if(error)throw error},
+    delete:async()=>{const{error}=await sb.from(c).delete().eq("id",id);if(error)throw error}}}}}
+
+const STAGES=[["lead","New lead","s"],["potential","Potential","s"],["meeting","Meeting set","j"],["meetingdone","Meeting done","s"],["quotation","Quotation","s"],["negotiation","Negotiation","s"],["locked","Deal locked","s"],["design","Design phase","a"],["completed","Completed","a"],["notpotential","Not potential","d"],["notinterested","Not interested","d"]];
+const SN=Object.fromEntries(STAGES.map(s=>[s[0],s[1]]));
+const ACTIVE=["lead","potential","meeting","meetingdone","quotation","negotiation","locked","design"];
+const RGROUPS=[["Sales",["Senior Manager","Manager","Specialist, Client Relations","Relationship Officer"]],["Architecture",["Senior project architect","Senior architect","Executive architect","Architect","Assistant architect","Junior architect","3D Visualizer","Project engineer"]],["Other",["Accounts","Management"]]];
+const SALESRE=/sales|manager|relationship|client relations/i;
+function roleOpts(sel){let h=RGROUPS.map(([g,l])=>'<optgroup label="'+g+'">'+l.map(r=>'<option'+(r===sel?" selected":"")+'>'+esc(r)+'</option>').join("")+'</optgroup>').join("");if(sel&&!ROLES.includes(sel))h+='<option selected>'+esc(sel)+'</option>';return h}
+const ROLES_OLD=["Sales","Senior project architect","Senior architect","Executive architect","Architect","Assistant architect","Junior architect","3D Visualizer","Project engineer","Accounts","Management"];
+const ROLES=RGROUPS.flatMap(g=>g[1]);
+const ARCHRE=/architect|visualizer|engineer/i;
+const PHASES=[["d2","2D conceptual"],["d2r","2D revision submission"],["el","Electrical & plumbing"],["ce","Ceiling electric drawing"],["mb","Moodboard"],["d3","3D"],["wd","Working drawing"],["fwd","Furniture working drawings"],["mdw","Main door working drawing"],["tm","Tiles MOQ"],["bq","BOQ"]];
+const CORE=["d2","el","mb","d3","bq"];
+const hasData=d=>d&&(d.a1||d.a2||d.a3||d.deadline||d.remark||(d.status&&d.status!=="Not started"));
+const phOf=key=>String(key).split("-")[0];
+function entries(p){const out=[];Object.entries((p&&p.del)||{}).forEach(([key,d])=>{if(hasData(d)&&PHASES.some(x=>x[0]===phOf(key)))out.push([key,d])});const ix=k=>PHASES.findIndex(x=>x[0]===phOf(k)),n=k=>Number(String(k).split("-")[1]||1);return out.sort((a,b)=>ix(a[0])-ix(b[0])||n(a[0])-n(b[0]))}
+const elabel=(key,d)=>SN_P(phOf(key))+(d&&d.title?": "+d.title:"");
+function freeKey(p,k){const d=(p&&p.del)||{};if(!hasData(d[k]))return k;let n=2;while(hasData(d[k+"-"+n]))n++;return k+"-"+n}
+function scope(p){const es=entries(p).map(([k,d])=>[k,elabel(k,d)]);return es.length?es:PHASES.filter(([k])=>CORE.includes(k))}
+function deriveTasks(){tasks={};Object.entries(projects).forEach(([pid,p])=>entries(p).forEach(([k,d])=>{tasks[pid+"~"+k]={pid,key:phOf(k),title:d.title||"",work:elabel(k,d),arch:d.a1||"",draft:d.a2||"",due:d.deadline||"",status:d.status||"Not started",done:d.done||"",remark:d.remark||""}}))}
+const PAYS=[["adv","Advance (on deal lock)"],["d2","After 2D conceptual"],["el","After electrical & plumbing"],["mb","After moodboard (optional)"],["d3","After 3D"],["bq","After BOQ"]];
+const SN_P=k=>(PHASES.find(x=>x[0]===k)||[k,k])[1];
+const isDone=st=>st==="Completed"||st==="Client approved";
+const PST=["Not started","On process","Submitted","Revision ongoing","Client approval pending","Client approved","Completed"];
+let db=null,team={},projects={},tasks={},wf={arch:"",st:"open",q:""},filter="active",openId=null,cur=null,saveT=null,live=false;
+
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const money=n=>(n&&canMoney())?("৳ "+Number(n).toLocaleString("en-IN")):"—";
+const getP=(o,p)=>p.split(".").reduce((a,k)=>a==null?undefined:a[k],o);
+function setP(o,p,v){const ks=p.split(".");let a=o;ks.slice(0,-1).forEach(k=>{if(a[k]==null||typeof a[k]!=="object")a[k]={};a=a[k]});a[ks[ks.length-1]]=v}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.remove("hidden");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.add("hidden"),2200)}
+const name=id=>(team[id]&&team[id].name)||"";
+const roleCls=r=>ARCHRE.test(r||"")?"p-arch":"p-sales";
+function stageCls(s){const x=STAGES.find(a=>a[0]===s);return !x?"p-n":x[2]==="d"?"p-drop":x[2]==="a"?"p-arch":"p-sales"}
+
+/* ---------- storage ---------- */
+function write(col,id,obj){
+  if(!db){return}
+  db.doc(col+"/"+id).set(obj).catch(e=>toast("Not saved: "+(e&&e.message||"permission needed")));
+}
+function remove(col,id){
+  if(col==="team")delete team[id];else if(col==="tasks")delete tasks[id];else delete projects[id];
+  render();
+  if(db)db.doc(col+"/"+id).delete().catch(e=>toast("Not deleted: "+(e&&e.message||"permission needed")));
+}
+function docsOf(snap){const out={};const list=(snap&&(snap.docs||snap))||[];
+  (Array.isArray(list)?list:Array.from(list)).forEach(d=>{const data=typeof d.data==="function"?d.data():d.data;if(d&&d.id&&data)out[d.id]=data});return out}
+async function init(){
+  render();
+  if(!window.supabase){live="none";render();return}
+  sb=window.supabase.createClient(SB_URL,SB_KEY);
+  try{const{data}=await sb.auth.getSession();authUser=data&&data.session?data.session.user:null}catch(e){authUser=null}
+  sb.auth.onAuthStateChange((ev,s)=>{const u=s&&s.user?s.user.id:"";if(u!==(authUser?authUser.id:""))location.reload()});
+  if(!authUser){live="auth";render();return}
+  db=makeDb(sb);me.uid=authUser.id;me.ready=true;
+  const timer=setTimeout(()=>{if(!live){live="none";render()}},15000);
+  db.collection("notes").onSnapshot(s=>{notes=docsOf(s);render()},e=>{});
+  db.collection("settings").onSnapshot(s=>{settings=docsOf(s);setLoaded=true;if(view()==="sheet-sync")render()},e=>{});
+  db.collection("team").onSnapshot(s=>{clearTimeout(timer);live=true;team=docsOf(s);render();if(openId)drawSheet()},e=>{clearTimeout(timer);live="none";render()});
+  db.collection("projects").onSnapshot(s=>{clearTimeout(timer);live=true;const fresh=docsOf(s);projLoaded=true;
+    if(openId&&cur&&saveT){fresh[openId]=cur}
+    projects=fresh;render();if(openId&&!saveT&&projects[openId]&&!document.activeElement.closest("#sheet")){cur=JSON.parse(JSON.stringify(projects[openId]));drawSheet()}},
+    e=>{clearTimeout(timer);live="none";render()});
+}
+/* ---------- views ---------- */
+/* ---------- users, roles, notifications ---------- */
+let me={ready:false,uid:"",owner:false,mid:"",admin:false,nouser:false},notes={},dashAs="",autoChk=false;
+let CL=null;
+function loadUser(){return;me.ready=false;me.nouser=false;Promise.resolve().then(()=>CL.use("user")).then(async u=>{if(u){me.uid=String((await u.id())||"");me.owner=!!(await u.isOwner());if(!me.uid&&!me.owner)me.nouser=true}else me.nouser=true}).catch(()=>{me.nouser=true}).then(()=>{me.ready=true;render()})}
+const SECS=[["my","My dashboard"],["pipeline","Pipeline"],["work","Work list"],["dashboard","Dashboard"],["sheet-sync","Sheet sync"],["team","Team"]],DEFPERM=["my","pipeline","work"];
+let sess="";try{sess=localStorage.getItem("gds_user")||""}catch(e){}
+function setSess(v){sess=v||"";try{v?localStorage.setItem("gds_user",v):localStorage.removeItem("gds_user")}catch(e){}}
+async function hashPw(id,pw){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("gds|"+id+"|"+pw));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}
+function resolveMe(){const hit=authUser?Object.entries(team).find(([,x])=>x&&x.uid===authUser.id):null;me.mid=hit?hit[0]:"";me.admin=!!(me.mid&&team[me.mid].admin)}
+const can=k=>k==="process"||me.admin||!!(me.mid&&(team[me.mid].perms||DEFPERM).includes(k));
+const canMoney=()=>me.admin||!!(me.mid&&team[me.mid]&&SALESRE.test(team[me.mid].role||""));
+const scopeAll=()=>me.admin||!!(me.mid&&team[me.mid].scope==="all");
+function vis(p){if(scopeAll())return true;const m=me.mid;if(!m||!p)return false;if(p.salesId===m||p.seniorId===m||getP(p,"meeting.salesId")===m||getP(p,"meeting.archId")===m)return true;return Object.values(p.del||{}).some(d=>d&&(d.a1===m||d.a2===m))}
+const visProjects=()=>Object.entries(projects).filter(([,p])=>vis(p));
+function notify(to,pid,text){if(!to||to===me.mid)return;const id=uid();notes[id]={to,pid:pid||"",text,at:new Date().toISOString(),read:false,by:me.mid||""};write("notes",id,notes[id])}
+const notesFor=mid=>Object.entries(notes).filter(([,n])=>n&&n.to===mid).sort((a,b)=>(b[1].at||"").localeCompare(a[1].at||""));
+const unread=()=>me.mid?notesFor(me.mid).filter(([,n])=>!n.read).length:0;
+function allowed(){return (me.admin?["pipeline","work","dashboard","sheet-sync","team"].concat(me.mid?["my"]:[]):["my","pipeline","work","dashboard","sheet-sync","team"].filter(can)).concat(["process"])}
+function navHtml(v){const own=!scopeAll(),lab={my:"My dashboard",pipeline:own?"My leads & projects":"Pipeline",work:own?"My work":"Work list",dashboard:"Dashboard","sheet-sync":"Sheet sync",team:"Team",process:"How it works"};
+  const n=unread();return allowed().map(k=>'<a href="#'+k+'" class="'+(k===v?"on":"")+'">'+lab[k]+(k==="my"&&n?' <span class="nb">'+n+'</span>':'')+'</a>').join("")+'<span class="who">'+(me.mid?esc(name(me.mid))+(me.admin?' · Admin':'')+' <button class="lo" data-act="chpw">Password</button> <button class="lo" data-act="logout">Log out</button>':me.owner?'Owner · Admin':'')+'</span>'}
+let loginErr="";
+function vGate(){return '<div class="card" style="max-width:420px;margin:40px auto"><h2>Log in</h2><div class="mut">Use the ID and password given to you by the admin.</div><form id="loginf"><label class="f">User ID</label><input name="login" autocomplete="username" required><label class="f">Password</label><input name="pw" type="password" autocomplete="current-password" required>'+(loginErr?'<div style="color:var(--bad);font-size:13px;margin-top:8px">'+esc(loginErr)+'</div>':'')+'<div style="margin-top:14px"><button class="pri" style="width:100%">Log in</button></div></form><details style="margin-top:16px"><summary class="mut" style="cursor:pointer">First-time setup (owner only)</summary><div class="mut rmk" style="margin:6px 0">Creates the very first admin account. It gets no access until it is linked to the team in Supabase.</div><form id="setupf"><label class="f">Your email</label><input name="email" type="email" required><label class="f">New password (8+ characters)</label><input name="pw" type="password" minlength="8" required><div style="margin-top:10px"><button style="width:100%">Create owner account</button></div></form></details></div>'}
+function vUnlinked(){const sql="insert into public.team (id, data) values ('owner', jsonb_build_object('name','Saif Kazi','role','CEO','admin',true,'login','"+esc((authUser&&authUser.email)||"")+"','uid','"+esc((authUser&&authUser.id)||"")+"','perms','[]'::jsonb,'scope','all')) on conflict (id) do update set data = public.team.data || excluded.data;";
+  return '<div class="card" style="max-width:640px;margin:40px auto"><h2>Account not linked yet</h2><div class="mut">You are signed in as <b>'+esc(authUser&&authUser.email)+'</b>, but this login is not part of the team.</div><p>Team members: ask the admin to set your login again.</p><p><b>Owner first-time setup:</b> open Supabase, SQL Editor, paste this and press Run, then reload this page.</p><textarea readonly style="width:100%;height:110px;font:12px monospace">'+sql+'</textarea><div class="row" style="margin-top:10px"><button class="sm" data-copy="'+sql.replace(/"/g,"&quot;")+'">Copy SQL</button><span class="sp"></span><button class="sm" data-act="logout">Log out</button></div></div>'}
+function salesStats(mid){const L=Object.entries(projects).filter(([,p])=>p.salesId===mid),c=f=>L.filter(([,p])=>f(p.stage||"lead")),sum=l=>l.reduce((a,[,p])=>a+pval(p),0);
+  const won=c(s=>["locked","design","completed"].includes(s)),qn=c(s=>s==="quotation"||s==="negotiation");
+  return{L,active:c(s=>["lead","potential","meeting","meetingdone","quotation","negotiation"].includes(s)).length,fresh:c(s=>s==="lead").length,pot:c(s=>s==="potential").length,meet:c(s=>s==="meeting"||s==="meetingdone").length,qn:qn.length,qnv:sum(qn),won:won.length,wonv:sum(won),lost:c(s=>s in DROPAT).length}}
+function vMy(mid,preview){mid=mid||me.mid;const m=team[mid];if(!m)return '<div class="card empty">This account is not linked to a team member yet.</div>';
+  let h=preview?'':'<div class="row"><div><div class="mut">'+esc(m.role||"")+'</div><h2 style="margin:0">'+esc(m.name)+'</h2></div></div>';
+  if(!preview){const ns=notesFor(mid);h+='<div class="card" style="margin-top:10px"><div class="row"><b>Notifications</b>'+(unread()?'<span class="pill p-bad">'+unread()+' new</span>':'')+'<span class="sp"></span>'+(unread()?'<button class="sm" data-act="readall">Mark all read</button>':'')+'</div>'+(ns.length?'<div class="nlist">'+ns.slice(0,15).map(([id,n])=>'<div class="nitem'+(n.read?"":" un")+'" data-note="'+esc(id)+'"><div>'+esc(n.text)+'</div><div class="mut rmk">'+esc((n.at||"").slice(0,16).replace("T"," "))+(n.by&&name(n.by)?' · by '+esc(name(n.by)):'')+'</div></div>').join("")+'</div>':'<div class="mut" style="margin-top:6px">No notifications yet. You will see one here when a lead is assigned to you.</div>')+'</div>'}
+  const s=salesStats(mid),isSales=SALESRE.test(m.role||"")||s.L.length>0;
+  if(isSales){h+='<h2 style="margin-top:16px">Leads & sales</h2><div class="kpis">'+[["Active leads",s.active],["New, to contact",s.fresh],["Potential",s.pot],["Meetings",s.meet],["Quotation & negotiation",s.qn],["Quoted value",money(s.qnv)],["Deals won",s.won],["Won value",money(s.wonv)],["Dropped",s.lost]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v">'+v+'</div></div>').join("")+'</div>';
+    const hot=s.L.filter(([,p])=>["meeting","meetingdone","quotation","negotiation"].includes(p.stage)).sort((a,b)=>FLOW.indexOf(b[1].stage)-FLOW.indexOf(a[1].stage)).slice(0,12);
+    h+='<div class="card"><b>Follow up next</b>'+(hot.length?'<div class="tw"><table><tr><th>Client</th><th>Phone</th><th>Stage</th><th>Value</th><th>Next step</th></tr>'+hot.map(([id,p])=>'<tr data-open="'+esc(id)+'" style="cursor:pointer"><td><b>'+esc(p.client||"")+'</b></td><td>'+esc(p.phone||"—")+'</td><td><span class="pill '+stageCls(p.stage)+'">'+esc(SN[p.stage])+'</span></td><td>'+(pval(p)?money(pval(p)):"—")+'</td><td class="ln">'+esc(NEXT[p.stage]||"")+'</td></tr>').join("")+'</table></div>':'<div class="mut" style="margin-top:6px">No leads in meeting, quotation or negotiation right now.</div>')+'</div>'}
+  const rs=results().filter(r=>r.arch===mid||r.lead===mid);
+  if(rs.length||ARCHRE.test(m.role||"")){const pend=rs.filter(r=>!isDone(r.st)),od=pend.filter(r=>r.res[1]==="p-bad");
+    h+='<h2 style="margin-top:16px">Design work</h2><div class="kpis">'+[["Pending",pend.length],["Overdue",od.length],["Completed",rs.filter(r=>isDone(r.st)).length],["Deadlines met",rs.filter(r=>r.res[0]==="Deadline met").length]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v"'+(l==="Overdue"&&v?' style="color:var(--bad)"':'')+'>'+v+'</div></div>').join("")+'</div>';
+    h+='<div class="card"><b>Pending work</b>'+(pend.length?'<div class="tw"><table><tr><th>Deadline</th><th>Project</th><th>Phase</th><th>Status</th><th></th></tr>'+pend.sort((a,b)=>(a.dl||"9999").localeCompare(b.dl||"9999")).map(r=>'<tr data-editt="'+esc(r.tid)+'" style="cursor:pointer"><td>'+esc(r.dl||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(r.st)+'</td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>').join("")+'</table></div>':'<div class="mut" style="margin-top:6px">Nothing pending.</div>')+'</div>'}
+  return h}
+function vSalesTeam(){const ids=Object.keys(team).filter(id=>SALESRE.test(team[id].role||"")||Object.values(projects).some(p=>p.salesId===id));
+  const st={};ids.forEach(id=>{const x=salesStats(id);x.total=x.L.length;x.conv=x.total?Math.round(x.won/x.total*100):0;st[id]=x});
+  ids.sort((a,b)=>st[b].wonv-st[a].wonv||st[b].won-st[a].won||st[b].conv-st[a].conv||(name(a)||"").localeCompare(name(b)||""));
+  const top=ids.length&&st[ids[0]].won>0?st[ids[0]]:null,isBest=x=>top&&x.wonv===top.wonv&&x.won===top.won&&x.conv===top.conv;
+  const un=Object.values(projects).filter(p=>LEADST.includes(p.stage||"lead")&&!(p.stage in DROPAT)&&!p.salesId).length;
+  let h='<div class="card" style="margin-top:10px"><h2>Sales performance</h2><div class="mut" style="margin:-6px 0 8px">Best performer: highest won value, then most deals won, then best conversion. Conversion is deals won out of all leads assigned.</div>'+(un&&me.admin?'<div class="banner">'+un+' active leads have no sales person assigned. Assign them in Pipeline, Leads.</div>':'');
+  h+=ids.length?'<div class="tw"><table><tr><th>Sales person</th><th>Leads</th><th>Active</th><th>New</th><th>Meetings</th><th>Quotation & negotiation</th><th>Quoted value</th><th>Won</th><th>Won value</th><th>Conversion</th><th>Dropped</th><th></th></tr>'+ids.map(id=>{const x=st[id];return '<tr'+(isBest(x)?' class="best"':'')+'><td style="white-space:nowrap">'+esc(name(id))+(isBest(x)?' <span class="pill bestp">★ Best performer</span>':'')+'</td><td>'+x.total+'</td><td>'+x.active+'</td><td>'+x.fresh+'</td><td>'+x.meet+'</td><td>'+x.qn+'</td><td>'+money(x.qnv)+'</td><td>'+x.won+'</td><td>'+money(x.wonv)+'</td><td>'+x.conv+'%</td><td>'+x.lost+'</td><td><button class="sm" data-dashas="'+esc(id)+'">'+(dashAs===id?"Hide":"View")+'</button></td></tr>'}).join("")+'</table></div>':'<div class="mut">Add sales team members and assign leads to see this.</div>';
+  h+='</div>';
+  if(dashAs&&team[dashAs])h+='<div class="card" style="margin-top:10px;border-left:4px solid var(--acc)"><div class="mut">Dashboard of</div><h2>'+esc(team[dashAs].name)+'</h2>'+vMy(dashAs,true)+'</div>';
+  return h}
+async function autoLeadCheck(){if(autoChk||!me.ready||!me.admin||!db||!setLoaded||!projLoaded||!leadSrc()||ld.rows!==null||ld.busy||imp.on)return;autoChk=true;
+  const mcp=await getMcp();if(!mcp)return;try{const s=leadSrc(),res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:AG5001"},{cache:false});const rows=parseLeads(payloadOf(res).values);if(rows){ld.rows=rows;ld.at=new Date().toLocaleString();render()}}catch(e){}}
+function view(){const h=(location.hash||"").slice(1),ok=allowed();return ok.includes(h)?h:ok[0]}
+function render(){
+  deriveTasks();
+  const v=view();
+  resolveMe();const v2=view();$("#nav").innerHTML=navHtml(v2);
+  let b="";
+  if(live==="auth"){$("#nav").innerHTML="";$("#app").innerHTML=vGate();return}
+  if(live==="none")b='<div class="banner">Could not reach the database. Check your internet connection and reload.</div>';
+  else if(!live)b='<div class="banner">Loading shared data…</div>';
+  if(imp.on&&imp.of)b+='<div class="banner">Importing leads from the sheet: '+imp.n+' of '+imp.of+'. Keep this page open.</div>';
+  if(db&&live===true&&!me.ready){$("#app").innerHTML=b+'<div class="banner">Checking your account…</div>';return}
+  if(db&&live===true&&!me.mid){$("#nav").innerHTML="";$("#app").innerHTML=b+vUnlinked();return}
+  if(me.admin&&ld.rows!==null&&v2==="pipeline"){const n=buildLeadProps().length;if(n)b+='<div class="banner">'+n+' new or changed leads in the Google Sheet. <a href="#sheet-sync">Review them in Sheet sync</a>.</div>'}
+  $("#app").innerHTML=b+({pipeline:vPipeline,work:vWork,dashboard:vDash,"sheet-sync":vSync,team:vTeam,process:vProcess,my:()=>vMy()}[v2])();
+  autoLeadCheck();
+}
+function nextDeadline(p){let best=null;entries(p).forEach(([k,d])=>{if(d.deadline&&!isDone(d.status)&&(!best||d.deadline<best))best=d.deadline});return best}
+const FLOW=["lead","potential","meeting","meetingdone","quotation","negotiation","locked","design","completed"];
+const DROPAT={notpotential:1,notinterested:5};
+const NEXT={lead:"Qualify the lead",potential:"Set a meeting",meeting:"Hold meeting, add remarks",meetingdone:"Send the quotation",quotation:"Negotiate the value",negotiation:"Lock the deal",locked:"Assign architects and deadlines",design:"Deliverables running",completed:"All deliverables done",notpotential:"Dropped at qualification",notinterested:"Dropped at negotiation"};
+let layout=null,pq="";
+function delivDone(p){return PHASES.filter(([k])=>isDone(getP(p,"del."+k+".status"))).length}
+function pval(p){return Number(getP(p,"lock.value")||getP(p,"nego.value")||getP(p,"quote.amount")||0)}
+function track(p){const st=p.stage||"lead",drop=st in DROPAT,ci=drop?DROPAT[st]:FLOW.indexOf(st);
+  return '<div class="track">'+FLOW.map((f,i)=>'<span title="'+esc(SN[f])+'" class="seg'+(i<ci?" done":i===ci?(drop?" drop":" cur"):"")+'"></span>').join("")+'</div>'}
+function stageLine(p){const st=p.stage||"lead",drop=st in DROPAT,ci=drop?DROPAT[st]:FLOW.indexOf(st);
+  return '<div class="sline"><span class="pill '+stageCls(st)+'">'+esc(SN[st]||st)+'</span><span class="mut">'+(drop?"Stopped at step "+(ci+1):"Step "+(ci+1)+" of "+FLOW.length)+'</span></div>'}
+function pcard(id,p,compact){const nd=nextDeadline(p),val=pval(p),st=p.stage||"lead";
+  let h='<div class="card pc'+(compact?" mini":"")+'" data-open="'+esc(id)+'" draggable="true" data-drag="'+esc(id)+'">';
+  h+='<div class="row"><h3>'+esc(p.client||"Unnamed client")+'</h3><span class="sp"></span><span class="mut">'+esc(p.gd||"")+'</span></div>';
+  h+=(compact?"":stageLine(p))+track(p);
+  h+='<div class="nxt'+(st in DROPAT?" dropped":"")+'"><span>'+(st in DROPAT?"✕":"→")+'</span>'+esc(NEXT[st]||"")+'</div>';
+  if(["locked","design","completed"].includes(st)){const sc=scope(p),d=sc.filter(([k])=>isDone(getP(p,"del."+k+".status"))).length;h+='<div class="dprog"><div class="mut">Deliverables '+d+'/'+sc.length+'</div><div class="dbar">'+sc.map(([k,l])=>'<span title="'+esc(l+": "+(getP(p,"del."+k+".status")||"Not started"))+'" class="'+(isDone(getP(p,"del."+k+".status"))?"on":(getP(p,"del."+k+".status")&&getP(p,"del."+k+".status")!=="Not started"?"wip":""))+'"></span>').join("")+'</div></div>'}
+  if(val||name(p.salesId))h+='<div class="row mut meta"><span><b>'+(val?money(val):"")+'</b></span><span class="sp"></span>'+(name(p.salesId)?'<span>'+esc(name(p.salesId))+'</span>':"")+'</div>';
+  if(nd)h+='<div class="mut meta">Next deadline '+esc(nd)+(nd<today()?' <span class="pill p-bad">Overdue</span>':"")+'</div>';
+  return h+'</div>'}
+function nextCell(p,st){const es=entries(p).filter(([,d])=>!isDone(d.status)),run=es.filter(([,d])=>d.status&&d.status!=="Not started"),byDl=(a,b)=>(a[1].deadline||"9999").localeCompare(b[1].deadline||"9999");
+  const line=(tag,cls,[k,d])=>'<div class="nx">'+esc(elabel(k,d))+'</div>';
+  if(run.length){run.sort(byDl);return run.map(e=>line("Running","p-mid",e)).join("")}
+  const ns=es.filter(([,d])=>d.deadline).sort(byDl);if(ns.length)return line("To submit","p-n",ns[0]);
+  if(es.length)return line("To submit","p-n",es[0]);
+  if(entries(p).length)return '<span class="mut">All listed deliverables done</span>';
+  return esc(st==="design"?"Add deliverables and deadlines":(NEXT[st]||""))}
+function prow(id,p){const st=p.stage||"lead",drop=st in DROPAT,ci=drop?DROPAT[st]:FLOW.indexOf(st),nd=nextDeadline(p),val=pval(p);
+  let dv="";if(["locked","design","completed"].includes(st)){const sc=scope(p),d=sc.filter(([k])=>isDone(getP(p,"del."+k+".status"))).length;dv='<span class="dmini"><span style="width:'+Math.round(d/sc.length*100)+'%"></span></span><span class="mut">'+d+'/'+sc.length+'</span>'}
+  return '<tr class="lrow" data-open="'+esc(id)+'"><td class="lc"><b>'+esc(p.client||"Unnamed client")+'</b><div class="mut">GD '+esc(p.gd||"—")+'</div></td>'+
+   '<td class="ls"><div class="row" style="gap:6px;flex-wrap:nowrap"><span class="pill '+stageCls(st)+'">'+esc(SN[st]||st)+'</span><span class="mut" style="white-space:nowrap">'+(ci+1)+'/'+FLOW.length+'</span></div>'+track(p)+'</td>'+
+   '<td class="ln'+(drop?" dropped":"")+'">'+nextCell(p,st)+'</td>'+
+   '<td class="ld'+(dv?"":" e")+'">'+(dv||'<span class="mut">—</span>')+'</td>'+
+   '<td class="lv'+(val?"":" e")+'">'+(val?money(val):'<span class="mut">—</span>')+'</td>'+
+   '<td class="lp'+(name(p.salesId)?"":" e")+'">'+esc(name(p.salesId)||"—")+'</td>'+
+   '<td class="lt'+(nd?"":" e")+'">'+(nd?esc(nd)+(nd<today()?'<div><span class="pill p-bad">Overdue</span></div>':''):'<span class="mut">—</span>')+'</td></tr>'}
+const LEADST=["lead","potential","meeting","meetingdone","quotation","negotiation","notpotential","notinterested"];
+let pview="projects",pfil="ongoing",lopen={};
+function lrow(id,p){const val=pval(p);
+  return '<tr class="lrow" data-open="'+esc(id)+'"><td class="lc"><b>'+esc(p.client||"Unnamed client")+'</b><div class="mut">'+esc([p.ptype,p.address].filter(Boolean).join(" · "))+'</div></td><td class="lp'+(p.phone?"":" e")+'" style="white-space:nowrap">'+esc(p.phone||"—")+'</td><td class="lp'+(name(p.salesId)||me.admin?"":" e")+'">'+(me.admin?'<select class="asg" data-assign="'+esc(id)+'">'+opt(people(SALESRE),p.salesId,"Unassigned")+'</select>':esc(name(p.salesId)||"—"))+'</td><td class="lp'+(p.source?"":" e")+'">'+esc(p.source||"—")+'</td><td class="lt'+(p.leadDate?"":" e")+'">'+esc(p.leadDate||"—")+'</td><td class="lv'+(val?"":" e")+'">'+(val?money(val):'<span class="mut">—</span>')+'</td><td class="ln'+((p.stage in DROPAT)?" dropped":"")+'">'+esc(NEXT[p.stage||"lead"]||"")+'</td></tr>'}
+function vPipeline(){
+  const q=pq.toLowerCase(),hit=p=>!q||((p.client||"")+" "+(p.gd||"")+" "+(p.phone||"")).toLowerCase().includes(q);
+  const all=visProjects(),isLead=p=>LEADST.includes(p.stage||"lead");
+  const leads=all.filter(([,p])=>isLead(p)),projs=all.filter(([,p])=>!isLead(p));
+  let h='<div class="row"><h2 style="margin:0">Pipeline</h2><span class="sp"></span><input id="pq" placeholder="Search client, GD or phone" value="'+esc(pq)+'" style="max-width:240px">'+(me.admin?'<button data-act="goleads">Import from Google Sheet</button>':'')+'<button class="pri" data-act="new">+ New lead</button></div>';
+  h+='<div class="ptabs"><button class="'+(pview==="projects"?"on":"")+'" data-pview="projects">Ongoing projects <b>'+projs.filter(([,p])=>p.stage!=="completed").length+'</b></button><button class="'+(pview==="leads"?"on":"")+'" data-pview="leads">Leads <b>'+leads.filter(([,p])=>!(p.stage in DROPAT)).length+'</b></button></div>';
+  if(pview==="projects"){
+    const cnt=f=>projs.filter(([,p])=>f==="ongoing"?p.stage!=="completed":f==="all"?true:p.stage===f).length;
+    h+='<div class="stages">'+[["ongoing","Ongoing"],["locked","Deal locked"],["design","Design phase"],["completed","Completed"]].map(([k,l])=>'<span class="chip'+(pfil===k?" on":"")+'" data-pfil="'+k+'">'+l+'<b>'+cnt(k)+'</b></span>').join("")+'</div>';
+    const list=projs.filter(([,p])=>(pfil==="ongoing"?p.stage!=="completed":p.stage===pfil)&&hit(p)).sort((a,b)=>FLOW.indexOf(a[1].stage)-FLOW.indexOf(b[1].stage)||(a[1].client||"").localeCompare(b[1].client||""));
+    if(!list.length)return h+'<div class="card empty">No projects here.</div>';
+    return h+'<div class="card plist"><table><thead><tr><th>Client</th><th>Stage</th><th>Next step</th><th>Deliverables</th><th>Value</th><th>Sales</th><th>Next deadline</th></tr></thead><tbody>'+list.map(([id,p])=>prow(id,p)).join("")+'</tbody></table></div>'}
+  if(!leads.length)return h+'<div class="card empty">No leads yet. Tap “+ New lead” or import from Google Sheet.</div>';
+  LEADST.forEach((st,i)=>{const list=leads.filter(([,p])=>(p.stage||"lead")===st&&hit(p)).sort((a,b)=>(b[1].leadDate||b[1].updated||"").localeCompare(a[1].leadDate||a[1].updated||""));
+    if(!list.length&&q)return;const drop=st in DROPAT,open=q?list.length>0:(lopen[st]!==undefined?lopen[st]:(!drop&&list.length>0&&list.length<=30));const sum=list.reduce((a,[,p])=>a+pval(p),0);
+    h+='<div class="lsec'+(drop?" ldrop":"")+'"><div class="lhead" data-ltog="'+st+'"><span class="lnum">'+(drop?"✕":i+1)+'</span><b>'+esc(SN[st])+'</b><span class="pill '+stageCls(st)+'">'+list.length+'</span>'+(sum?'<span class="mut">'+money(sum)+'</span>':'')+'<span class="sp"></span><span class="mut">'+(open?"Hide ▴":"Show ▾")+'</span></div>';
+    if(open)h+=list.length?'<div class="plist" style="padding:0 12px 6px"><table><thead><tr><th>Client</th><th>Phone</th><th>Sales</th><th>Source</th><th>Lead date</th><th>Value</th><th>Next step</th></tr></thead><tbody>'+list.map(([id,p])=>lrow(id,p)).join("")+'</tbody></table></div>':'<div class="mut" style="padding:0 14px 12px">No leads in this stage.</div>';
+    h+='</div>'});
+  return h}
+function results(){
+  const rows=[];
+  Object.entries(projects).forEach(([pid,p])=>entries(p).forEach(([k,d])=>{const who=d.a2||d.a1;if(who)rows.push({pid,tid:pid+"~"+k,ph:phOf(k),lead:d.a1||"",p,phase:elabel(k,d),arch:who,dl:d.deadline,st:d.status||"Not started",dn:d.done})}));
+  rows.forEach(r=>{if(!r.dl)r.res=["No deadline","p-n"];else if(isDone(r.st))r.res=!r.dn?["Done","p-ok"]:r.dn<=r.dl?["Deadline met","p-ok"]:["Late","p-bad"];else r.res=today()>r.dl?["Overdue","p-bad"]:["On track","p-mid"]});
+  return rows;
+}
+let dtab="";
+function vDash(){const r=me.mid?(team[me.mid].role||""):"",tabs=me.admin?["sales","arch"]:SALESRE.test(r)?["sales"]:["arch"];if(!tabs.includes(dtab))dtab=tabs[0];
+  return (tabs.length>1?'<div class="ptabs" style="margin-top:0">'+[["sales","Sales"],["arch","Architect"]].map(([k,l])=>'<button class="'+(dtab===k?"on":"")+'" data-dtab="'+k+'">'+l+'</button>').join("")+'</div>':'<h2>'+(dtab==="sales"?"Sales dashboard":"Architect dashboard")+'</h2>')+(dtab==="sales"?vDashSales():vDashArch())}
+function vDashSales(){
+  const all=Object.values(projects);
+  const sum=f=>all.reduce((a,p)=>a+Number(f(p)||0),0);
+  const pipe=sum(p=>ACTIVE.slice(0,6).includes(p.stage)?(getP(p,"nego.value")||getP(p,"quote.amount")):0);
+  const locked=sum(p=>["locked","design","completed"].includes(p.stage)?getP(p,"lock.value"):0);
+  const paid=sum(p=>PAYS.reduce((a,[k])=>a+(getP(p,"pay."+k+".paid")?Number(getP(p,"pay."+k+".amt")||0):0),0));
+  const won=all.filter(p=>["locked","design","completed"].includes(p.stage)).length,lost=all.filter(p=>["notpotential","notinterested"].includes(p.stage)).length;
+  let h='<div class="kpis">'+[["Active leads",all.filter(p=>ACTIVE.slice(0,6).includes(p.stage)).length],["Pipeline value",money(pipe)],["Deals locked",won],["Locked value",money(locked)],["Payments received",money(paid)],["Dropped",lost]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v">'+v+'</div></div>').join("")+'</div>';
+  return h+vSalesTeam();
+}
+function vDashArch(){
+  let h='';
+  const rs=results(),m={};
+  const grp={};rs.forEach(r=>{const g=grp[r.arch+"|"+r.pid+"|"+r.ph]=grp[r.arch+"|"+r.pid+"|"+r.ph]||{arch:r.arch,pid:r.pid,it:[]};g.it.push(r)});
+  Object.values(grp).forEach(g=>{const a=m[g.arch]=m[g.arch]||{p:new Set(),c:0,q:0,ns:0,ok:0,bad:0};a.p.add(g.pid);const done=g.it.every(r=>isDone(r.st)),bad=g.it.some(r=>r.res[1]==="p-bad");
+    if(done)a.c++;else if(g.it.every(r=>r.st==="Not started"))a.ns++;else a.q++;
+    if(bad)a.bad++;else if(done&&g.it.some(r=>r.res[0]==="Deadline met"))a.ok++});
+  const badKey=new Set(Object.entries(grp).filter(([,g])=>g.it.some(r=>r.res[1]==="p-bad")).map(([k])=>k));
+  rs.forEach(r=>{if(r.res[1]!=="p-bad"||!r.lead||r.lead===r.arch)return;const k=r.lead+"|"+r.pid+"|"+r.ph;if(badKey.has(k))return;badKey.add(k);const a=m[r.lead]=m[r.lead]||{p:new Set(),c:0,q:0,ns:0,ok:0,bad:0};a.p.add(r.pid);a.bad++});
+  h+='<div class="card"><h2>Architect performance</h2><div class="mut" style="margin:-6px 0 8px">Each phase of a project counts once per person, even with several work items in it. If a drafter is set, it counts for the drafter; otherwise for the assigned architect. A late or overdue item also counts as late for its project architect. Best performer: most deadlines met, then fewest late or overdue.</div>';
+  const ks=Object.keys(m).sort((x,y)=>m[y].ok-m[x].ok||m[x].bad-m[y].bad||m[y].c-m[x].c||(name(x)||"").localeCompare(name(y)||""));
+  const top=ks.length&&m[ks[0]].ok>0?m[ks[0]]:null,isBest=a=>top&&a.ok===top.ok&&a.bad===top.bad&&a.c===top.c;
+  h+=ks.length?'<div class="tw"><table><tr><th>Architect</th><th>Projects</th><th>Completed</th><th>In progress</th><th>Not started</th><th>Met</th><th>Late / overdue</th></tr>'+ks.map(k=>{const a=m[k];return '<tr'+(isBest(a)?' class="best"':'')+'><td>'+esc(name(k)||"Removed member")+(isBest(a)?' <span class="pill bestp">★ Best performer</span>':'')+'</td><td>'+a.p.size+'</td><td>'+a.c+'</td><td>'+a.q+'</td><td>'+a.ns+'</td><td>'+a.ok+'</td><td>'+(a.bad?'<span class="pill p-bad">'+a.bad+'</span>':0)+'</td></tr>'}).join("")+'</table></div>':'<div class="mut">Assign architects to deliverables inside a project to see this.</div>';
+  h+='</div><div class="card" style="margin-top:10px"><h2>Pending deliverables</h2>';
+  const due=rs.filter((r,i,a)=>!isDone(r.st)&&(!r.tid||a.findIndex(x=>x.tid===r.tid)===i)).sort((a,b)=>(a.dl||"9999").localeCompare(b.dl||"9999"));
+  h+=due.length?'<div class="tw"><table><tr><th>Deadline</th><th>Project</th><th>Phase</th><th>Architect</th><th>Status</th><th></th></tr>'+due.map(r=>'<tr '+(r.tid?'data-editt="'+esc(r.tid)+'"':'data-open="'+esc(r.pid)+'"')+' style="cursor:pointer"><td>'+esc(r.dl||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(name(r.arch))+'</td><td><span class="pill '+(r.st==="Not started"?"p-n":"p-mid")+'">'+esc(r.st)+'</span></td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>').join("")+'</table></div>':'<div class="mut">Nothing pending.</div>';
+  h+='</div><div class="card" style="margin-top:10px"><h2>Completed deliverables</h2>';
+  const dn=rs.filter((r,i,a)=>isDone(r.st)&&(!r.tid||a.findIndex(x=>x.tid===r.tid)===i)).sort((a,b)=>(b.dn||"").localeCompare(a.dn||""));
+  h+=dn.length?'<div class="tw"><table><tr><th>Done on</th><th>Project</th><th>Phase</th><th>Architect</th><th>Status</th><th></th></tr>'+dn.map(r=>'<tr '+(r.tid?'data-editt="'+esc(r.tid)+'"':'data-open="'+esc(r.pid)+'"')+' style="cursor:pointer"><td>'+esc(r.dn||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(name(r.arch))+'</td><td><span class="pill p-ok">'+esc(r.st)+'</span></td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>').join("")+'</table></div>':'<div class="mut">Deliverables marked Client approved or Completed show here.</div>';
+  return h+'</div>';
+}
+function vTeam(){
+  const ms=Object.entries(team).sort((a,b)=>(a[1].role||"").localeCompare(b[1].role||"")||(a[1].name||"").localeCompare(b[1].name||""));
+  let h='<div class="card"><h2>Add team member</h2><form id="addm"><div class="g2"><div><label class="f">Name</label><input name="name" required></div><div><label class="f">Designation</label><select name="role">'+roleOpts("")+'</select></div><div><label class="f">Email</label><input name="email" type="email"></div><div><label class="f">WhatsApp number</label><input name="wa" placeholder="+8801…"></div><div><label class="f">Also called (nicknames used in sheets)</label><input name="aka" placeholder="Pooja"></div></div><div style="margin-top:12px"><button class="pri">Add member</button></div></form></div>';
+  if(me.admin)h+='<details class="card" style="margin-top:10px"><summary style="cursor:pointer"><b>Import data from the claude.ai version</b></summary><div class="mut rmk" style="margin:6px 0">In the claude.ai app, open Team, press Export data, copy the text, paste it here and press Import. Existing records with the same ID are overwritten. Logins are not copied: set each member\'s password again here.</div><textarea id="impbox" style="width:100%;height:120px;font:12px monospace" placeholder="Paste the exported data here"></textarea><div class="row" style="margin-top:8px"><button class="pri sm" data-act="importdata">Import</button><span class="mut rmk" id="impmsg"></span></div></details>';
+  h+='<div class="card" style="margin-top:10px"><h2>Team ('+ms.length+')</h2>';
+  if(!ms.length)return h+'<div class="mut">No members yet. Add Sales people and architects so they can be picked inside projects.</div></div>';
+  h+='<div class="tw"><table><tr><th>Name</th><th>Designation</th><th>Email</th><th>WhatsApp</th><th></th></tr>'+ms.map(([id,m])=>'<tr><td><b>'+esc(m.name)+'</b>'+(m.admin?' <span class="pill p-mid">Admin</span>':'')+(m.login&&m.uid?' <span class="pill p-ok">Login: '+esc(m.login)+'</span>':' <span class="pill p-n">No login</span>')+(m.aka?'<div class="mut rmk">Also called: '+esc(m.aka)+'</div>':'')+'</td><td><span class="pill '+roleCls(m.role)+'">'+esc(m.role)+'</span></td><td>'+esc(m.email||"—")+'</td><td>'+esc(m.wa||"—")+'</td><td style="white-space:nowrap"><button class="sm" data-editm="'+esc(id)+'">Edit</button> <button class="sm danger" data-delm="'+esc(id)+'">Remove</button></td></tr>').join("")+'</table></div></div>';
+  return h;
+}
+async function importData(){const box=$("#impbox"),msg=$("#impmsg");let d;try{d=JSON.parse(box.value)}catch(e){toast("That text is not valid export data");return}
+  if(!d||d.app!=="gds-pipeline"){toast("That text is not valid export data");return}
+  let n=0,fail=0;for(const c of ["team","projects","settings","notes"]){const o=d[c]||{};
+    const rows=Object.entries(o).map(([id,data])=>{data=Object.assign({},data);delete data.pw;if(c==="team"){if(team[id]&&team[id].uid){data.uid=team[id].uid;data.admin=!!(team[id].admin||data.admin)}else delete data.uid}return{id,data,updated_at:new Date().toISOString()}});
+    for(let i=0;i<rows.length;i+=200){const{error}=await sb.from(c).upsert(rows.slice(i,i+200));if(error){fail+=Math.min(200,rows.length-i);console.warn(error)}else n+=Math.min(200,rows.length-i);if(msg)msg.textContent="Imported "+n+(fail?", failed "+fail:"")}}
+  toast("Import finished: "+n+" records"+(fail?", "+fail+" failed":""));if(!fail)box.value=""}
+/* ---------- Google Sheet sync ---------- */
+const SHEETS="Google Sheets";
+let settings={},sy={busy:false,err:"",items:null,at:"",warn:[],form:{url:"",tab:"",tabs:[]},phsel:{}};
+const norm=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+const gdNorm=s=>String(s||"").toUpperCase().replace(/^\s*GD\b/,"").replace(/[^A-Z0-9]/g,"");
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return "k"+h.toString(36)}
+function sheetIdOf(u){u=String(u||"").trim();const m=u.match(/\/d\/([a-zA-Z0-9_-]{20,})/);return m?m[1]:(/^[a-zA-Z0-9_-]{20,}$/.test(u)?u:"")}
+function parseDate(s){const m=String(s||"").match(/(\d{1,2})\s*[.\/-]\s*(\d{1,2})\s*[.\/-]\s*(\d{2,4})/);if(!m)return"";let y=m[3];if(y.length===2)y="20"+y;return y+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0")}
+function phaseOf(w){const s=norm(w);
+  if(/\bmoq\b|tiles|tilles/.test(s))return"tm";if(/main door/.test(s))return"mdw";if(/furniture/.test(s))return"fwd";
+  if(/kitchen|working drawing/.test(s))return"wd";if(/ceiling/.test(s))return"ce";if(/moodboard|mood board/.test(s))return"mb";
+  if(/\bboq\b/.test(s))return"bq";if(/\b3d\b/.test(s))return"d3";if(/\b2d\b/.test(s)&&/revis/.test(s))return"d2r";
+  if(/\b2d\b|brick/.test(s))return"d2";if(/electric|plumbing/.test(s))return"el";return""}
+function person(cell,re){const first=String(cell||"").split(/[\n,\/]+/)[0].trim();
+  const skip=["arch","arc","bhai","apu","architect","bhaiya"],toks=norm(first).split(" ").filter(t=>t.length>=3&&!skip.includes(t));
+  if(!toks.length)return{id:"",raw:""};let best="",bs=0,tie=false;
+  Object.entries(team).forEach(([id,m])=>{if(re&&!re.test(m.role||""))return;const mt=norm(m.name).split(" ").filter(t=>t.length>=3),ak=norm(m.aka).split(" ").filter(t=>t.length>=3);let sc=0;
+    toks.forEach(t=>{if(ak.includes(t))sc+=3;else if(mt.includes(t))sc+=2;else if(t.length>=4&&mt.some(x=>x.length>=4&&(x.startsWith(t)||t.startsWith(x))))sc+=1});
+    if(sc>bs){bs=sc;best=id;tie=false}else if(sc===bs&&sc>0)tie=true});
+  return{id:tie?"":best,raw:first}}
+function parseSheet(values,src){const out=[];if(!Array.isArray(values))return out;
+  let hi=-1;for(let i=0;i<Math.min(values.length,6);i++){const r=(values[i]||[]).map(norm);if(r.some(c=>/\bgd\b/.test(c))&&r.some(c=>/work/.test(c))){hi=i;break}}
+  if(hi<0)return null;const H=values[hi].map(norm),col=re=>H.findIndex(c=>re.test(c));
+  const c={gd:col(/\bgd\b/),client:col(/client/),work:col(/work/),date:col(/delivery/),remark:col(/remark/),sales:col(/sales/),arch:H.findIndex(x=>/architect/.test(x)&&!/assistant/.test(x)),draft:col(/drafting|assistant|visuali/)};
+  values.slice(hi+1).forEach(r=>{const g=i=>i>=0?String((r||[])[i]??"").trim():"";const gd=g(c.gd),work=g(c.work).replace(/\s+/g," ");if(!gd||!work)return;
+    const a1=person(g(c.arch),ARCHRE),a2=person(g(c.draft),ARCHRE),sl=person(g(c.sales),SALESRE),remark=g(c.remark).replace(/\s*\n\s*/g," "),dateRaw=g(c.date);
+    out.push({src,gd:gd.replace(/^\s*GD\s*/i,"").trim(),gdn:gdNorm(gd),client:g(c.client),work,ph:phaseOf(work),a1:a1.id,a1raw:a1.raw,a2:a2.id,a2raw:a2.raw,sales:sl.id,salesraw:sl.raw,date:parseDate(dateRaw),dateRaw,remark,done:/^\s*done\b/i.test(remark),pendc:/pending from client|client'?s end/i.test(remark)})});
+  return out}
+const declined=()=>(settings.declined&&settings.declined.keys)||{};
+const sources=()=>(settings.sync&&settings.sync.sources)||[];
+const monthStart=()=>today().slice(0,8)+"01";
+const curItems=()=>(sy.items||[]).filter(it=>!it.date||it.date>=monthStart());
+function buildProps(){const items=curItems(),seen={},S=[];
+  items.forEach(it=>{const k=it.gdn+"|"+it.ph+"|"+it.date+"|"+norm(it.work);if(seen[k])return;seen[k]=1;S.push(it)});
+  const byGd={};Object.entries(projects).forEach(([pid,p])=>{const g=gdNorm(p.gd);if(g)byGd[g]=pid});
+  const groups={};S.forEach(it=>{const k=it.gdn+"|"+it.ph;(groups[k]=groups[k]||[]).push(it)});
+  const props=[];
+  Object.values(groups).forEach(g=>{const pid=byGd[g[0].gdn]||"",ph=g[0].ph;
+    let E=pid&&ph?entries(projects[pid]).filter(([k])=>phOf(k)===ph).map(([k,d])=>({k,d})):[];const hadE=E.length>0;let R=g.slice();const pairs=[];
+    const take=fn=>{R=R.filter(it=>{const i=E.findIndex(e=>fn(it,e));if(i<0)return true;pairs.push([it,E[i]]);E.splice(i,1);return false})};
+    if(ph){const tm=(it,e)=>norm(e.d.title||SN_P(ph))===norm(it.work);take((it,e)=>!!it.date&&e.d.deadline===it.date&&tm(it,e));take((it,e)=>!!it.date&&e.d.deadline===it.date);take(tm);if(R.length===1&&E.length===1)take(()=>true)}
+    pairs.forEach(([it,e])=>{const ch=[],d=e.d;
+      if(it.date&&it.date!==(d.deadline||""))ch.push(["deadline","Delivery date",d.deadline||"—",it.date,it.date]);
+      if(it.done&&!isDone(d.status))ch.push(["status","Status",d.status||"Not started","Completed","Completed"]);
+      else if(it.pendc&&["","Not started","On process"].includes(d.status||""))ch.push(["status","Status",d.status||"Not started","Client approval pending","Client approval pending"]);
+      if(it.a1&&it.a1!==(d.a1||""))ch.push(["a1","Architect",name(d.a1)||"—",name(it.a1),it.a1]);
+      const ed=d.a2&&d.a2!==d.a1?d.a2:"",sd=it.a2&&it.a2!==(it.a1||d.a1)?it.a2:"";
+      if(it.a2raw&&it.a2&&sd!==ed)ch.push(["a2","Drafting",name(ed)||"none",name(sd)||"none",sd]);
+      if(ch.length)props.push({kind:"chg",pid,key:e.k,it,ch,id:hash("chg|"+it.gdn+"|"+e.k+"|"+ch.map(c=>c[0]+"="+c[4]).join("&"))})});
+    if(!R.length)return;
+    if(!ph){R.forEach(it=>props.push({kind:"new",pid,it,its:[it],id:hash("new|"+it.gdn+"||"+norm(it.work)+"|"+it.date)}));return}
+    if(hadE)return;
+    const sd={},its=[];R.forEach(it=>{const k=it.date||norm(it.work);if(sd[k])return;sd[k]=1;its.push(it)});
+    props.push({kind:"new",pid,it:its[0],its,id:hash("new|"+its[0].gdn+"|"+ph+"|"+its.map(i=>i.date+norm(i.work)).join("|"))})});
+  const dec=declined();return props.filter(p=>!dec[p.id])}
+function mcpMsg(e){const c=e&&e.code;
+  if(c==="needs_reauth")return"Google Sheets needs to be reconnected. Reconnect it in claude.ai Settings, Connectors, then try again.";
+  if(c==="server_not_connected"||c==="selection_required")return"Google Sheets is not connected for your account. Add it in claude.ai Settings, Connectors, then try again.";
+  if(c==="not_in_manifest"||c==="consent_required"||c==="approval_required")return"This app is not allowed to read Google Sheets for you yet. Tap Check sheets again and choose Allow.";
+  if(c==="blocked_by_policy")return"Your organization blocks Google Sheets for this app.";
+  if(c==="tool_error")return"Google Sheets could not read that sheet. Check the link and tab name, and that your Google account can open it.";
+  if(c==="not_granted"||c==="capability_disabled"||c==="capability_removed")return"Google Sheet sync works only in the claude.ai version of this app.";
+  return"Could not reach Google Sheets just now. Try again in a moment."}
+function payloadOf(res){let p=res&&res.payload;if(typeof p==="string"){try{p=JSON.parse(p)}catch(x){p={}}}p=p||{};return p.content&&typeof p.content==="object"&&!Array.isArray(p.content)?p.content:p}
+async function getMcp(){try{return window.claude&&window.claude.use?await window.claude.use("mcp"):null}catch(x){return null}}
+async function syncCheck(){if(sy.busy)return;const srcs=sources();if(!srcs.length){sy.err="Add a Google Sheet first.";render();return}
+  sy.busy=true;sy.err="";sy.warn=[];render();
+  const mcp=await getMcp();if(!mcp){sy.busy=false;sy.err="Google Sheet sync works only in the claude.ai version of this app. Run the sync there; the results will not appear here automatically.";render();return}
+  const all=[];let fail=0,lastErr=null;
+  for(const s of srcs){try{const res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:L1000"},{cache:false});
+      const rows=parseSheet(payloadOf(res).values,s.tab);if(rows===null)sy.warn.push('"'+s.tab+'": no header row with GD NO. and Work List was found.');else all.push(...rows)}
+    catch(e){fail++;lastErr=e;sy.warn.push('"'+s.tab+'": '+mcpMsg(e))}}
+  sy.busy=false;if(fail===srcs.length){sy.err=mcpMsg(lastErr);sy.warn=[]}else{sy.items=all;sy.at=new Date().toLocaleString()}render()}
+async function loadTabs(){const sid=sheetIdOf(sy.form.url);if(!sid){sy.err="Paste a Google Sheets link first.";render();return}
+  sy.busy=true;sy.err="";render();const mcp=await getMcp();if(!mcp){sy.busy=false;sy.err=mcpMsg({code:"capability_disabled"});render();return}
+  try{const res=await mcp.callTool(SHEETS,"get_spreadsheet",{spreadsheetId:sid,fields:["sheets.properties.title"]},{cache:false});
+    sy.form.tabs=(payloadOf(res).sheets||[]).map(x=>x&&x.properties&&x.properties.title).filter(Boolean);if(!sy.form.tab&&sy.form.tabs.length)sy.form.tab=sy.form.tabs[0]}
+  catch(e){sy.err=mcpMsg(e)}sy.busy=false;render()}
+function saveSettings(id,obj){settings[id]=obj;write("settings",id,obj)}
+function acceptProp(p){const it=p.it;
+  if(p.kind==="chg"){saveProject(p.pid,pr=>{const d=getP(pr,"del."+p.key);if(!d)return;p.ch.forEach(c=>{d[c[0]]=c[4]})});return true}
+  const ph=sy.phsel[p.id]||it.ph;if(!ph)return false;let pid=p.pid;
+  if(!pid){pid="gdp"+it.gdn.toLowerCase();if(!projects[pid]){const now=new Date().toISOString();projects[pid]={client:it.client,gd:it.gd,stage:"design",salesId:it.sales||"",source:"",created:now,updated:now}}}
+  saveProject(pid,pr=>{pr.del=pr.del||{};(p.its||[it]).forEach(it=>{const k=freeKey(pr,ph);
+    pr.del[k]={title:norm(it.work)===norm(SN_P(ph))?"":it.work,a1:it.a1||"",a2:it.a2&&it.a2!==it.a1?it.a2:"",deadline:it.date||"",status:it.done?"Completed":it.pendc?"Client approval pending":"Not started",done:"",remark:[it.done?"":it.remark,!it.date&&it.dateRaw?"Delivery: "+it.dateRaw:"",!it.a1&&it.a1raw?"Architect in sheet: "+it.a1raw:"",!it.a2&&it.a2raw?"Drafting in sheet: "+it.a2raw:""].filter(Boolean).join(" ")}})});
+  return true}
+function declineProp(id){const k=Object.assign({},declined());k[id]=1;saveSettings("declined",{keys:k})}
+function vSyncWork(){const srcs=sources();
+  let h='<div class="row"><h2 style="margin:0">Sheet sync</h2><span class="sp"></span><button class="pri" data-act="synccheck"'+(sy.busy?" disabled":"")+'>'+(sy.busy?"Checking…":"Check sheets")+'</button></div>';
+  h+='<div class="mut" style="margin:4px 0 10px">Reads your Google Sheets and lists new work and changes. Nothing changes in the app until you accept it. Only rows with a delivery date in the current month or later are checked. A phase that already exists in a project is never listed as new work.</div>';
+  if(sy.err)h+='<div class="banner" style="background:var(--badbg);color:var(--bad)">'+esc(sy.err)+'</div>';
+  sy.warn.forEach(w=>{h+='<div class="banner">'+esc(w)+'</div>'});
+  h+='<div class="card"><b>Sheets to read</b>';
+  h+=srcs.length?'<div class="tw"><table>'+srcs.map((s,i)=>'<tr><td>'+esc(s.name||"Google Sheet")+'<div class="mut rmk">Tab: '+esc(s.tab)+'</div></td><td style="text-align:right"><button class="sm danger" data-delsrc="'+i+'">Remove</button></td></tr>').join("")+'</table></div>':'<div class="mut">No sheet added yet.</div>';
+  h+='<div class="g2" style="margin-top:8px"><div><label class="f">Google Sheets link</label><input id="surl" value="'+esc(sy.form.url)+'" placeholder="https://docs.google.com/spreadsheets/d/..."></div><div><label class="f">Tab name</label><input id="stab" list="stabs" value="'+esc(sy.form.tab)+'" placeholder="Sheet1"><datalist id="stabs">'+sy.form.tabs.map(t=>'<option value="'+esc(t)+'">').join("")+'</datalist></div></div>';
+  h+='<div class="links"><button class="sm" data-act="loadtabs">Load tab names</button><button class="sm" data-act="addsrc">Add as work sheet</button><button class="sm" data-act="setlead">Use as lead sheet</button></div></div>';
+  if(sy.items===null)return h+'<div class="card empty" style="margin-top:10px">Tap “Check sheets” to compare the sheets with the app.</div>';
+  const props=buildProps(),nw=props.filter(p=>p.kind==="new"),ch=props.filter(p=>p.kind==="chg");
+  h+='<div class="row" style="margin-top:14px"><b>'+props.length+' to review</b><span class="mut">Checked '+esc(sy.at)+' · '+curItems().length+' rows from this month checked, '+(sy.items.length-curItems().length)+' older rows skipped</span><span class="sp"></span>'+(props.length?'<button class="sm" data-act="acceptall">Accept all</button>':'')+(Object.keys(declined()).length?'<button class="sm" data-act="cleardec">Show declined again</button>':'')+'</div>';
+  if(!props.length)return h+'<div class="card empty" style="margin-top:10px">Everything in the sheets matches the app.</div>';
+  const head=it=>'<div class="row"><div><b>'+esc(it.client||"—")+'</b> <span class="mut">GD '+esc(it.gd)+'</span><div>'+esc(it.work)+'</div><div class="mut rmk">From tab: '+esc(it.src)+'</div></div><span class="sp"></span>';
+  if(ch.length){h+='<h2 style="margin-top:14px">Changes ('+ch.length+')</h2>';ch.forEach(p=>{h+='<div class="card prop">'+head(p.it)+'<button class="sm pri" data-acc="'+p.id+'">Accept</button><button class="sm" data-dec="'+p.id+'">Decline</button></div><table class="difft">'+p.ch.map(c=>'<tr><td class="mut">'+c[1]+'</td><td><s>'+esc(c[2])+'</s></td><td>→ <b>'+esc(c[3])+'</b></td></tr>').join("")+'</table></div>'})}
+  if(nw.length){h+='<h2 style="margin-top:14px">New work ('+nw.length+')</h2>';nw.forEach(p=>{const it=p.it,ph=sy.phsel[p.id]||it.ph,its=p.its||[it];
+    h+='<div class="card prop"><div class="row"><div><b>'+esc(it.client||"—")+'</b> <span class="mut">GD '+esc(it.gd)+'</span><div class="mut rmk">From tab: '+esc(it.src)+'</div></div><span class="sp"></span><button class="sm pri" data-acc="'+p.id+'">Accept</button><button class="sm" data-dec="'+p.id+'">Decline</button></div>'+
+     '<div class="row" style="margin-top:6px;gap:6px">'+(p.pid?'':'<span class="pill p-mid">New project</span>')+(ph?'':'<span class="pill p-bad">Choose a phase</span>')+'<span class="mut">Phase</span><select data-phsel="'+p.id+'" style="max-width:240px">'+opt(PHASES,ph,"Choose phase")+'</select></div>'+
+     '<div class="tw"><table class="difft" style="width:100%"><tr><th>Work</th><th>Architect</th><th>Delivery date</th><th>Status</th></tr>'+its.map(i=>'<tr><td>'+esc(i.work)+(i.remark&&!i.done?'<div class="mut rmk">'+esc(i.remark)+'</div>':'')+'</td><td>'+(i.a1?esc(name(i.a1)):i.a1raw?'<span class="pill p-mid">Unknown: '+esc(i.a1raw)+'</span>':'—')+(i.a2&&i.a2!==i.a1?'<div class="mut rmk">Drafting: '+esc(name(i.a2))+'</div>':(!i.a2&&i.a2raw?'<div class="mut rmk">Unknown drafter: '+esc(i.a2raw)+'</div>':''))+'</td><td style="white-space:nowrap">'+esc(i.date||i.dateRaw||"—")+'</td><td>'+(i.done?"Completed":i.pendc?"Client approval pending":"Not started")+'</td></tr>').join("")+'</table></div></div>'})}
+  return h}
+/* ---------- Lead import from Google Sheet ---------- */
+let ld={busy:false,err:"",rows:null,at:"",f:"all",show:50,prog:""};
+const nameN=s=>norm(s).replace(/^((md|mr|mrs|ms|dr|eng|engr|mohammad|mohammed|muhammad)\s+)+/,"")||norm(s);
+const phoneN=s=>{const d=String(s||"").replace(/\D/g,"");return d.length>=10?d.slice(-10):d};
+const MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function parseAnyDate(s){s=String(s||"").trim();const p2=x=>String(x).padStart(2,"0"),yy=y=>y.length===2?"20"+y:y;
+  let m=s.match(/^(\d{1,2})[-\s]([A-Za-z]{3})[A-Za-z]*[-\s,]+(\d{2,4})$/);if(m&&MON[m[2].toLowerCase()])return yy(m[3])+"-"+p2(MON[m[2].toLowerCase()])+"-"+p2(m[1]);
+  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);if(m)return yy(m[3])+"-"+p2(m[1])+"-"+p2(m[2]);return parseDate(s)}
+const numS=s=>{const n=String(s||"").replace(/[^\d.]/g,"");return n?String(Math.round(Number(n))):""};
+const isYes=s=>/^y/i.test(String(s||"").trim());
+function leadStage(r){const cs=norm(r.stage),co=norm(r.outcome);
+  if(cs==="won"||isYes(r.won))return"locked";if(cs==="lost"||isYes(r.lost))return"notinterested";
+  if(cs==="negotiation")return"negotiation";if(/quotation/.test(cs))return"quotation";
+  if(cs==="meeting"||cs==="site visit")return norm(r.mstatus)==="completed"?"meetingdone":"meeting";
+  if(co==="not interested"||co==="wrong number")return"notpotential";if(co==="interested")return"potential";return"lead"}
+function parseLeads(values){if(!Array.isArray(values))return null;let hi=-1;
+  for(let i=0;i<Math.min(values.length,6);i++){const r=(values[i]||[]).map(norm);if(r.some(c=>/client/.test(c))&&r.some(c=>/contact|phone/.test(c))){hi=i;break}}
+  if(hi<0)return null;const H=values[hi].map(norm),col=re=>H.findIndex(c=>re.test(c));
+  const C={date:col(/^lead date/),client:col(/client/),phone:col(/contact|phone/),sales:col(/assigned/),email:col(/email/),source:col(/lead source/),ptype:col(/project type/),loc:col(/location/),req:col(/requirement/),budget:col(/budget/),outcome:col(/call outcome/),mdate:col(/meeting date/),mstatus:col(/meeting status/),qdate:col(/quotation date/),qval:col(/quotation value/),nval:col(/negotiation value/),lost:col(/^lost$/),lreason:col(/lost reason/),won:col(/^won$/),wdate:col(/won date/),wval:col(/won value/),stage:col(/current stage/)};
+  const out=[],seen={};values.slice(hi+1).forEach(v=>{const r={};Object.keys(C).forEach(k=>{r[k]=C[k]>=0?String((v||[])[C[k]]??"").replace(/\s+/g," ").trim():""});
+    if(!r.client)return;const key=phoneN(r.phone)||norm(r.client);if(seen[key])return;seen[key]=1;r.key=key;r.st=leadStage(r);r.salesId=person(r.sales,SALESRE).id;out.push(r)});
+  return out}
+function leadDoc(r){const now=new Date().toISOString(),d={client:r.client,phone:r.phone,email:r.email,address:r.loc,source:r.source,salesId:r.salesId||"",stage:r.st,ptype:r.ptype,requirement:r.req,budget:numS(r.budget),leadDate:parseAnyDate(r.date),from:"sheet",created:now,updated:now};
+  leadVals(d,r);return d}
+function leadVals(d,r){if(r.mdate||r.mstatus){d.meeting=Object.assign({},d.meeting,{remarks:["Meeting date in sheet: "+(r.mdate||"not set"),r.mstatus?"Status: "+r.mstatus:""].filter(Boolean).join(". ")})}
+  if(numS(r.qval)||r.qdate)d.quote=Object.assign({},d.quote,{sent:"yes",amount:numS(r.qval),date:parseAnyDate(r.qdate)});
+  if(numS(r.nval))d.nego=Object.assign({},d.nego,{done:"yes",value:numS(r.nval)});
+  if(numS(r.wval)||r.wdate)d.lock=Object.assign({},d.lock,{value:numS(r.wval),date:parseAnyDate(r.wdate)});
+  if(r.lreason)d.nego=Object.assign({},d.nego,{note:"Lost: "+r.lreason})}
+const leadSrc=()=>settings.leads||null;
+const SALESST=["lead","potential","meeting","meetingdone","quotation","negotiation","locked"];
+function buildLeadProps(){const rows=ld.rows||[],byP={},byN={};
+  Object.entries(projects).forEach(([pid,p])=>{const ph=phoneN(p.phone);if(ph)byP[ph]=pid;const n=nameN(p.client);if(n&&!byN[n])byN[n]=pid});
+  const dec=declined(),out=[];
+  rows.forEach(r=>{const pid=byP[phoneN(r.phone)]||byN[nameN(r.client)]||"";
+    if(!pid){const id=hash("lead|"+r.key);if(!dec[id])out.push({kind:"new",r,id});return}
+    const a=projects[pid].stage||"lead",s=r.st;if(!SALESST.includes(a))return;
+    const fwd=SALESST.includes(s)&&SALESST.indexOf(s)>SALESST.indexOf(a),drop=(s in DROPAT);
+    if(fwd||drop){const id=hash("leadchg|"+r.key+"|"+s);if(!dec[id])out.push({kind:"chg",r,pid,from:a,id})}});
+  return out}
+function leadApply(p){if(p.kind==="new"){let id="ld"+(phoneN(p.r.phone)||hash(norm(p.r.client)));while(projects[id])id+="x";projects[id]=leadDoc(p.r);return[id,projects[id]]}
+  const d=JSON.parse(JSON.stringify(projects[p.pid]));d.stage=p.r.st;leadVals(d,p.r);d.updated=new Date().toISOString();projects[p.pid]=d;return[p.pid,d]}
+async function leadCheck(){if(ld.busy)return;const s=leadSrc();if(!s){ld.err="Set a lead sheet first: paste its link and tab name above, then tap “Use as lead sheet”.";render();return}
+  ld.busy=true;ld.err="";render();const mcp=await getMcp();if(!mcp){ld.busy=false;ld.err=mcpMsg({code:"capability_disabled"});render();return}
+  try{const res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:AG5001"},{cache:false});
+    const rows=parseLeads(payloadOf(res).values);if(rows===null)ld.err="No header row with Client Name and Contact No. was found in that tab.";else{ld.rows=rows;ld.at=new Date().toLocaleString();ld.show=50}}
+  catch(e){ld.err=mcpMsg(e)}ld.busy=false;render()}
+async function leadAcceptAll(list){if(ld.busy)return;ld.busy=true;let n=0,fail=0;
+  for(const p of list){const [id,doc]=leadApply(p);n++;ld.prog="Saving "+n+" of "+list.length+"…";if(n%10===1)render();
+    if(db){try{await db.doc("projects/"+id).set(doc);if(p.kind==="new"&&doc.salesId&&doc.salesId!==me.mid){const nid=uid();await db.doc("notes/"+nid).set({to:doc.salesId,pid:id,text:"New lead assigned to you: "+doc.client+(doc.phone?" ("+doc.phone+")":""),at:new Date().toISOString(),read:false,by:me.mid||""})}}catch(e){fail++}await new Promise(r=>setTimeout(r,120))}}
+  ld.busy=false;ld.prog="";toast("Imported "+(n-fail)+(fail?", "+fail+" not saved":""));render()}
+function leadShown(){const all=buildLeadProps();return ld.f==="all"?all:ld.f==="chg"?all.filter(p=>p.kind==="chg"):all.filter(p=>p.kind==="new"&&p.r.st===ld.f)}
+function vLeads(){const s=leadSrc();
+  let h='<div class="row" style="margin-top:26px"><h2 style="margin:0" id="leads">Leads from Google Sheet</h2><span class="sp"></span><button class="pri" data-act="leadcheck"'+(ld.busy?" disabled":"")+'>'+(ld.busy?(ld.prog||"Working…"):"Check leads")+'</button></div>';
+  h+='<div class="mut" style="margin:4px 0 10px">'+(s?'Lead sheet: <b>'+esc(s.name||"Google Sheet")+'</b>, tab '+esc(s.tab)+'. ':'No lead sheet set. ')+'Leads already in the app (same phone number or client name) are not listed again.</div>';
+  if(ld.err)h+='<div class="banner" style="background:var(--badbg);color:var(--bad)">'+esc(ld.err)+'</div>';
+  if(ld.rows===null)return h;
+  const all=buildLeadProps(),nw=all.filter(p=>p.kind==="new"),ch=all.filter(p=>p.kind==="chg"),cnt=k=>nw.filter(p=>p.r.st===k).length;
+  h+='<div class="row"><b>'+nw.length+' new leads, '+ch.length+' stage changes</b><span class="mut">Checked '+esc(ld.at)+' · '+ld.rows.length+' leads in the sheet</span></div>';
+  if(!all.length)return h+'<div class="card empty" style="margin-top:10px">Every lead in the sheet is already in the app.</div>';
+  h+='<div class="stages">'+[["all","All",all.length],["chg","Stage changes",ch.length]].concat(STAGES.map(x=>[x[0],x[1],cnt(x[0])]).filter(x=>x[2])).map(([k,l,n])=>'<span class="chip'+(ld.f===k?" on":"")+'" data-lf="'+k+'">'+esc(l)+'<b>'+n+'</b></span>').join("")+'</div>';
+  const list=leadShown();
+  h+='<div class="row" style="margin-bottom:6px"><span class="mut">Showing '+Math.min(ld.show,list.length)+' of '+list.length+'</span><span class="sp"></span>'+(list.length?'<button class="sm" data-act="leadall">Accept all '+list.length+' shown</button>':'')+'</div>';
+  h+='<div class="card" style="padding:4px 10px"><div class="tw"><table><tr><th>Client</th><th>Phone</th><th>Sales</th><th>Source</th><th>Stage</th><th></th></tr>'+list.slice(0,ld.show).map(p=>{const r=p.r;return '<tr><td><b>'+esc(r.client)+'</b><div class="mut rmk">'+esc([r.ptype,r.loc].filter(Boolean).join(" · "))+'</div></td><td style="white-space:nowrap">'+esc(r.phone||"—")+'</td><td>'+(r.salesId?esc(name(r.salesId)):r.sales?'<span class="pill p-mid">Unknown: '+esc(r.sales)+'</span>':'—')+'</td><td>'+esc(r.source||"—")+'</td><td>'+(p.kind==="chg"?'<s class="mut">'+esc(SN[p.from])+'</s> → ':'')+'<span class="pill '+stageCls(r.st)+'">'+esc(SN[r.st])+'</span></td><td style="white-space:nowrap"><button class="sm pri" data-lacc="'+p.id+'">Accept</button> <button class="sm" data-ldec="'+p.id+'">Decline</button></td></tr>'}).join("")+'</table></div></div>';
+  if(list.length>ld.show)h+='<div class="links"><button class="sm" data-act="leadmore">Show 50 more</button></div>';
+  return h}
+function vSync(){return vSyncWork()+vLeads()}
+let setLoaded=false,projLoaded=false,imp={on:false,n:0,of:0,done:false};
+async function maybeImport(){if(imp.on||imp.done||!db||!setLoaded||!projLoaded||settings.leadsImported)return;imp.on=true;
+  let data=null;try{const r=await fetch("leads-import.json",{cache:"no-store"});if(r.ok)data=await r.json()}catch(e){}
+  if(!data||settings.leadsImported){imp.on=false;imp.done=true;return}
+  const todo=Object.entries(data).filter(([id])=>!projects[id]);imp.of=todo.length;let fail=0;render();
+  for(const [id,doc] of todo){if(projects[id]){imp.n++;continue}
+    try{await db.doc("projects/"+id).set(doc);projects[id]=doc}catch(e){fail++;if(fail>=3&&imp.n<3){imp.on=false;imp.done=true;render();return}}
+    imp.n++;if(imp.n%15===0)render();await new Promise(r=>setTimeout(r,100))}
+  imp.on=false;imp.done=true;if(!fail)saveSettings("leadsImported",{at:new Date().toISOString(),n:imp.of});toast("Leads imported: "+(imp.of-fail)+(fail?", "+fail+" not saved":""));render()}
+function vProcess(){
+  const S=[["Leads","Boosting & marketing bring in leads.","Sales","s"],["Qualify","Sales marks each lead Potential or Not potential.","Sales","s"],["Meeting","Onsite or at office. Architect + Sales attend; both get WhatsApp, email and calendar notice.","Sales + Architect","j"],["Meeting done","Sales records how it went and remarks.","Sales","s"],["Quotation","Value proposed to the client.","Sales","s"],["Negotiation","Final value agreed — or the client is Not interested.","Sales","s"],["Deal locked","New consultancy sale. Payment phases and dates set with Accounts.","Sales","s"],["Deliverables & dates","Dates and deadlines fixed for each deliverable.","Sales + Architect","j"],["Senior project architect","Gets the calendar and notification.","Architect","a"],["Executive architects","Senior distributes the work.","Architect","a"],["2D → Electrical & plumbing → Moodboard → 3D → BOQ","Each deliverable has its own deadline and status. Dashboard tracks met vs late.","Architect","a"]];
+  const col={s:["var(--accbg)","var(--acc)"],j:["#eeece6","var(--ink)"],a:["var(--archbg)","var(--arch)"]};
+  return '<h2>How sales works at Grey.D\'Studio</h2><div class="flow">'+S.map((s,i)=>'<div class="step"><span class="n" style="background:'+col[s[3]][0]+';color:'+col[s[3]][1]+'">'+(i+1)+'</span><div><b>'+esc(s[0])+'</b> <span class="pill '+(s[3]==="a"?"p-arch":s[3]==="s"?"p-sales":"p-n")+'">'+s[2]+'</span><div class="mut">'+esc(s[1])+'</div></div></div>').join("")+'</div><div class="note">Drop-outs: a lead can stop at <b>Not potential</b> (step 2) or <b>Not interested</b> (step 6).</div><p class="mut" style="margin-top:12px">Visual flow: <a href="https://claude.ai/artifact/HuMeAQ1A7ujFaMnFgCVGiw" target="_blank">Sales process whiteboard</a></p>';
+}
+
+/* ---------- project sheet ---------- */
+const opt=(list,v,blank)=>(blank?'<option value="">'+blank+'</option>':"")+list.map(o=>{const [val,l]=Array.isArray(o)?o:[o,o];return '<option value="'+esc(val)+'"'+(String(v??"")===String(val)?" selected":"")+'>'+esc(l)+'</option>'}).join("");
+const people=re=>Object.entries(team).filter(([,m])=>!re||re.test(m.role||"")).sort((a,b)=>(a[1].name||"").localeCompare(b[1].name||"")).map(([id,m])=>[id,m.name+" ("+m.role+")"]);
+function F(label,path,type,o){const v=getP(cur,path);o=o||{};
+  if(type==="select")return '<div><label class="f">'+label+'</label><select data-k="'+path+'">'+opt(o.list,v,o.blank||"Select")+'</select></div>';
+  if(type==="textarea")return '<div style="grid-column:1/-1"><label class="f">'+label+'</label><textarea rows="3" data-k="'+path+'">'+esc(v)+'</textarea></div>';
+  return '<div><label class="f">'+label+'</label><input type="'+(type||"text")+'" data-k="'+path+'" value="'+esc(v)+'"></div>'}
+function sec(n,title,who,open,body){return '<details class="sec"'+(open?" open":"")+'><summary><span class="n">'+n+'</span>'+title+'<span class="who pill '+(who==="Architect"?"p-arch":who==="Sales"?"p-sales":"p-n")+'">'+who+'</span></summary><div class="body">'+body+'</div></details>'}
+function gcal(title,start,end,details,emails){const u=new URL("https://calendar.google.com/calendar/render");u.searchParams.set("action","TEMPLATE");u.searchParams.set("text",title);u.searchParams.set("dates",start+"/"+end);u.searchParams.set("details",details);u.searchParams.set("ctz","Asia/Dhaka");if(emails.length)u.searchParams.set("add",emails.join(","));return u.toString()}
+const dt=s=>s.replace(/[-:]/g,"").slice(0,13)+"00";
+function dayRange(d){const x=new Date(d+"T00:00");x.setDate(x.getDate()+1);return [d.replace(/-/g,""),x.toISOString().slice(0,10).replace(/-/g,"")]}
+const IC={
+ wa:'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="#fff" d="M9.1 7.2c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3l-1.9-.9c-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5l-.9-2.1z"/></svg>',
+ mail:'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" fill="#EA4335"/><path d="M3 6.5l9 6.5 9-6.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+ cal:'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5" fill="#fff" stroke="#4285F4" stroke-width="1.8"/><path d="M3 9h18" stroke="#4285F4" stroke-width="1.8"/><path d="M8 2.5v4M16 2.5v4" stroke="#4285F4" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="12" width="4" height="3.5" rx=".6" fill="#34A853"/><rect x="13" y="12" width="4" height="3.5" rx=".6" fill="#FBBC04"/></svg>',
+ grp:'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><circle cx="9" cy="10.5" r="2" fill="#fff"/><circle cx="15" cy="10.5" r="2" fill="#fff"/><path d="M5.8 16.2c.6-1.9 1.8-2.9 3.2-2.9s2.6 1 3 2.2c.4-1.2 1.6-2.2 3-2.2s2.6 1 3.2 2.9" fill="#fff"/></svg>'};
+function notifyLinks(ids,title,text,start,end){
+  const ms=ids.map(i=>team[i]&&Object.assign({id:i},team[i])).filter(Boolean);
+  if(!ms.length)return '<div class="mut" style="margin-top:8px">Pick people above to get WhatsApp, email and calendar buttons.</div>';
+  const em=ms.map(m=>m.email).filter(Boolean);
+  let h='<div class="nbox"><div class="nt">Notify</div>';
+  ms.forEach(m=>{
+    const role=(team[m.id].role||"");
+    h+='<div class="nrow"><span class="nname">'+esc(m.name)+' <span class="pill '+roleCls(role)+'">'+esc(role)+'</span></span>';
+    h+=m.wa?'<a class="ib" target="_blank" title="WhatsApp '+esc(m.name)+'" href="https://wa.me/'+esc(m.wa.replace(/\D/g,""))+'?text='+encodeURIComponent(text)+'">'+IC.wa+'<span>WhatsApp</span></a>':'<span class="ib off" title="No WhatsApp number in Team">'+IC.wa+'<span>No number</span></span>';
+    h+=m.email?'<a class="ib" target="_blank" title="Email '+esc(m.name)+'" href="https://mail.google.com/mail/?view=cm&to='+encodeURIComponent(m.email)+'&su='+encodeURIComponent(title)+'&body='+encodeURIComponent(text)+'">'+IC.mail+'<span>Email</span></a>':'<span class="ib off" title="No email in Team">'+IC.mail+'<span>No email</span></span>';
+    h+='</div>'});
+  h+='<div class="nrow all"><span class="nname"><b>Everyone at once</b></span>';
+  h+='<a class="ib" target="_blank" title="Send to a WhatsApp group" href="https://wa.me/?text='+encodeURIComponent(text)+'">'+IC.grp+'<span>WhatsApp group</span></a>';
+  if(em.length>1)h+='<a class="ib" target="_blank" title="One email to all" href="https://mail.google.com/mail/?view=cm&to='+encodeURIComponent(em.join(","))+'&su='+encodeURIComponent(title)+'&body='+encodeURIComponent(text)+'">'+IC.mail+'<span>Email all</span></a>';
+  if(start)h+='<a class="ib" target="_blank" title="Google Calendar invite to everyone" href="'+esc(gcal(title,start,end,text,em))+'">'+IC.cal+'<span>Calendar invite</span></a>';
+  h+='<button class="ib" data-copy="'+esc(text)+'">Copy message</button></div>';
+  h+='<details class="msg"><summary>Message preview</summary><pre>'+esc(text)+'</pre></details></div>';
+  return h;
+}
+function drawSheet(){
+  const p=cur,st=p.stage||"lead",idx=ACTIVE.indexOf(st);
+  const after=s=>idx>=ACTIVE.indexOf(s)||st==="completed";
+  let h='<div class="row"><div><div class="mut">'+esc(p.gd||"New project")+'</div><h2 style="margin:0">'+esc(p.client||"New lead")+'</h2></div><span class="sp"></span><button data-act="close">Close</button></div>';
+  h+='<div class="g2" style="margin-top:6px">'+F("Stage","stage","select",{list:STAGES.map(s=>[s[0],s[1]]),blank:""})+'<div></div></div>';
+  // 1 client
+  h+=sec(1,"Lead & client","Sales",st==="lead"||!p.client,'<div class="g2">'+F("Client name","client")+F("GD code","gd")+F("Phone","phone","tel")+F("Email","email","email")+F("Project address","address")+F("Lead source","source","select",{list:["Facebook","Facebook boosting","WhatsApp","Marketing","Referral","Direct Call","Walk-in","Other"].concat(p.source&&!["Facebook","Facebook boosting","WhatsApp","Marketing","Referral","Direct Call","Walk-in","Other"].includes(p.source)?[p.source]:[])})+(me.admin?F("Sales person","salesId","select",{list:people(SALESRE)}):'<div><label class="f">Sales person</label><div style="padding:7px 0">'+esc(name(p.salesId)||"Not assigned")+'</div></div>')+F("Project type","ptype")+(canMoney()?F("Budget (BDT)","budget","number"):"<div></div>")+F("Lead date","leadDate","date")+'<div></div>'+F("Requirement / notes","requirement","textarea")+'</div>'+
+    '<div class="links"><button class="sm" data-stage="potential">Mark potential</button><button class="sm danger" data-stage="notpotential">Not potential</button></div>');
+  // 2 meeting
+  const mt=p.meeting||{},mtxt="Grey.D'Studio meeting: "+(p.client||"client")+" ("+(p.gd||"")+")\n"+(mt.type||"Meeting")+" on "+(mt.when||"").replace("T"," ")+"\nAddress: "+(mt.type==="Onsite"?(p.address||""):"Grey.D'Studio office, Bashundhara R/A");
+  let mEnd="";if(mt.when){const e=new Date(mt.when);e.setHours(e.getHours()+1);mEnd=dt(e.getFullYear()+"-"+String(e.getMonth()+1).padStart(2,"0")+"-"+String(e.getDate()).padStart(2,"0")+"T"+String(e.getHours()).padStart(2,"0")+":"+String(e.getMinutes()).padStart(2,"0"))}
+  h+=sec(2,"Meeting","Sales + Architect",["potential","meeting","meetingdone"].includes(st),'<div class="g2">'+F("Meeting type","meeting.type","select",{list:["Onsite","At office"]})+F("Date & time","meeting.when","datetime-local")+F("Sales","meeting.salesId","select",{list:people(SALESRE)})+F("Architect","meeting.archId","select",{list:people(ARCHRE)})+'</div>'+
+    notifyLinks([mt.salesId,mt.archId].filter(Boolean),"Client meeting: "+(p.client||""),mtxt,mt.when?dt(mt.when):"",mEnd)+
+    '<div class="g2" style="margin-top:6px">'+F("How did the meeting go?","meeting.rating","select",{list:["Very good","Good","Average","Poor"]})+'<div></div>'+F("Remarks (Sales)","meeting.remarks","textarea")+'</div>'+
+    '<div class="links"><button class="sm" data-stage="meeting">Meeting set</button><button class="sm" data-stage="meetingdone">Meeting done</button></div>');
+  // 3 quotation
+  if(canMoney())h+=sec(3,"Quotation","Sales",["meetingdone","quotation"].includes(st),'<div class="g2">'+F("Quotation sent?","quote.sent","select",{list:[["yes","Yes, sent"],["no","Not yet"]]})+F("Quotation amount (BDT)","quote.amount","number")+F("Sent on","quote.date","date")+'<div></div>'+F("If not sent, why?","quote.reason","textarea")+'</div><div class="links"><button class="sm" data-stage="quotation">Quotation sent</button></div>');
+  // 4 negotiation
+  if(canMoney())h+=sec(4,"Negotiation","Sales",st==="negotiation"||st==="quotation",'<div class="g2">'+F("Negotiation done?","nego.done","select",{list:[["yes","Yes, done"],["no","Not yet"]]})+F("Final agreed value (BDT)","nego.value","number")+F("Status / note","nego.note","textarea")+'</div><div class="links"><button class="sm" data-stage="negotiation">In negotiation</button><button class="sm pri" data-stage="locked">Deal locked</button><button class="sm danger" data-stage="notinterested">Not interested</button></div>');
+  // 5 lock + payments
+  let paySum=0;PAYS.forEach(([k])=>paySum+=Number(getP(p,"pay."+k+".amt")||0));
+  const tv=Number(getP(p,"lock.value")||0);
+  if(canMoney())h+=sec(5,"Deal locked & payment phases","Sales",st==="locked",'<div class="g2">'+F("Locked value (BDT)","lock.value","number")+F("Locked date","lock.date","date")+'</div>'+
+    '<div class="tw" style="margin-top:10px"><table><tr><th>Payment phase</th><th>Amount (BDT)</th><th>Due date</th><th>Paid</th></tr>'+PAYS.map(([k,l])=>'<tr><td>'+l+'</td><td><input type="number" data-k="pay.'+k+'.amt" value="'+esc(getP(p,"pay."+k+".amt"))+'"></td><td><input type="date" data-k="pay.'+k+'.due" value="'+esc(getP(p,"pay."+k+".due"))+'"></td><td><input type="checkbox" data-k="pay.'+k+'.paid"'+(getP(p,"pay."+k+".paid")?" checked":"")+'></td></tr>').join("")+'</table></div>'+
+    '<div class="note">Phases total: <b>'+money(paySum)+'</b>'+(tv?(paySum===tv?' — matches locked value':' — locked value '+money(tv)+', difference '+money(tv-paySum)):"")+'</div>');
+  // 6 deliverables
+  const sr=p.seniorId,srText="New project locked: "+(p.client||"")+" ("+(p.gd||"")+")\nDeliverable deadlines:\n"+scope(p).map(([k,l])=>"- "+l+": "+(getP(p,"del."+k+".deadline")||"not set")).join("\n");
+  let dh='<div class="g2">'+F("Senior project architect","seniorId","select",{list:people(/senior/i).length?people(/senior/i).concat(people(ARCHRE).filter(x=>!/senior/i.test(x[1]))):people(ARCHRE)})+'<div></div></div>'+notifyLinks([sr].filter(Boolean),"Project assigned: "+(p.client||""),srText,"","");
+  dh+='<div class="tw" style="margin-top:12px"><table class="dtab"><tr><th>Deliverable</th><th>Assigned architect</th><th>Deadline</th><th>Status</th><th>Done on</th><th>Result</th><th></th></tr>';
+  const rowsP=[],esP=entries(p);PHASES.forEach(([k,l])=>{const es=esP.filter(([key])=>phOf(key)===k);if(es.length)es.forEach(([key,d])=>rowsP.push([key,elabel(key,d),d]));else rowsP.push([k,l,{}])});
+  rowsP.forEach(([k,l,d])=>{let r=["—","p-n"];if(d.deadline){if(isDone(d.status))r=!d.done?["Done","p-ok"]:d.done<=d.deadline?["Met","p-ok"]:["Late","p-bad"];else r=today()>d.deadline?["Overdue","p-bad"]:["On track","p-mid"]}
+    const cal=d.deadline?(()=>{const [a,b]=dayRange(d.deadline);const ids=[sr,d.a1].filter(Boolean);const em=ids.map(i=>team[i]&&team[i].email).filter(Boolean);return '<a class="ib sm" target="_blank" href="'+esc(gcal(l+" deadline: "+(p.client||""),a,b,l+" due for "+(p.client||"")+" ("+(p.gd||"")+")",em))+'" title="Add to calendar">'+IC.cal+'</a>'})():"";
+    const has=hasData(d);
+    dh+='<tr class="'+(has?"":"dim")+'"><td><b>'+esc(l)+'</b>'+(d.remark?'<div class="mut rmk">'+esc(d.remark)+'</div>':'')+'</td><td>'+(name(d.a1)?esc(name(d.a1)):'<span class="mut">Not assigned</span>')+(d.a2&&d.a2!==d.a1&&name(d.a2)?'<div class="mut rmk">Drafting: '+esc(name(d.a2))+'</div>':'')+'</td><td style="white-space:nowrap">'+(d.deadline?esc(d.deadline):'<span class="mut">—</span>')+'</td><td><span class="pill '+(isDone(d.status)?"p-ok":"p-n")+'">'+esc(d.status||"Not started")+'</span></td><td style="white-space:nowrap">'+(d.done?esc(d.done):'<span class="mut">—</span>')+'</td><td><span class="pill '+r[1]+'">'+r[0]+'</span></td><td style="white-space:nowrap">'+cal+' <button class="sm" data-editph="'+esc(k)+'">Edit</button></td></tr>'});
+  dh+='</table></div><div class="links"><button class="sm pri" data-newt="'+esc(openId)+'">+ Add work</button><button class="sm" data-stage="design">Start design phase</button><button class="sm" data-stage="completed">All deliverables completed</button></div>';
+  h+=sec(6,"Deliverables, dates & architects","Architect",["locked","design","completed"].includes(st),dh);
+
+  h+='<div class="row" style="margin-top:14px"><span class="mut">'+(saveT?"Saving…":"Changes save automatically")+'</span><span class="sp"></span>'+(me.admin?'<button class="danger sm" data-act="del">Delete project</button>':'')+'</div>';
+  const sc=$("#modal").scrollTop,openSecs=[...document.querySelectorAll("#sheet details")].map(d=>d.open);
+  $("#sheet").innerHTML=h;
+  if(openSecs.length)document.querySelectorAll("#sheet details").forEach((d,i)=>{if(openSecs[i]!==undefined)d.open=openSecs[i]});
+  $("#modal").scrollTop=sc;
+}
+function openProject(id){openId=id;cur=JSON.parse(JSON.stringify(projects[id]||{}));$("#modal").classList.remove("hidden");$("#sheet").innerHTML="";drawSheet();$("#modal").scrollTop=0}
+function closeSheet(){flush();openId=null;cur=null;$("#modal").classList.add("hidden");render()}
+function queue(){cur.updated=new Date().toISOString();projects[openId]=cur;clearTimeout(saveT);saveT=setTimeout(flush,700)}
+function flush(){if(!saveT||!openId)return;clearTimeout(saveT);saveT=null;write("projects",openId,JSON.parse(JSON.stringify(cur)))}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-dtab],[data-assign],[data-claim],[data-note],[data-dashas],[data-unlink],[data-pview],[data-pfil],[data-ltog],[data-lacc],[data-ldec],[data-lf],[data-acc],[data-dec],[data-delsrc],[data-editph],[data-editt],[data-delt],[data-wst],[data-newt],[data-layout],[data-act],[data-filter],[data-open],[data-stage],[data-delm],[data-copy],[data-editm]");
+  if(!t)return;
+  if(t.dataset.lacc){const p=buildLeadProps().find(x=>x.id===t.dataset.lacc);if(p){const [id,doc]=leadApply(p);write("projects",id,doc);if(p.kind==="new"&&doc.salesId)notify(doc.salesId,id,"New lead assigned to you: "+doc.client+(doc.phone?" ("+doc.phone+")":""));toast("Accepted")}render();return}
+  if(t.dataset.ldec){declineProp(t.dataset.ldec);render();return}
+  if(t.dataset.lf){ld.f=t.dataset.lf;ld.show=50;render();return}
+  if(t.dataset.acc){const p=buildProps().find(x=>x.id===t.dataset.acc);if(p){if(acceptProp(p))toast("Accepted");else toast("Choose a phase first")}render();return}
+  if(t.dataset.dec){declineProp(t.dataset.dec);toast("Declined");render();return}
+  if(t.dataset.delsrc!==undefined){if(t.dataset.sure){const l=sources().slice();l.splice(Number(t.dataset.delsrc),1);saveSettings("sync",{sources:l});render()}else{t.dataset.sure=1;t.textContent="Tap again"}return}
+  if(t.dataset.editph){flush();const id=openId+"~"+t.dataset.editph;tasks[id]?editTask(id):editTask(null,openId,phOf(t.dataset.editph));return}
+  if(t.dataset.editt){editTask(t.dataset.editt);return}
+  if(t.dataset.newt!==undefined){editTask(null,t.dataset.newt);return}
+  if(t.dataset.wst){wf.st=t.dataset.wst;render();return}
+  if(t.dataset.delt){if(t.dataset.sure){$("#tm").classList.add("hidden");const [op,ok]=t.dataset.delt.split("~");saveProject(op,p=>{if(p.del)delete p.del[ok]});toast("Deleted")}else{t.dataset.sure=1;t.textContent="Tap again to delete"}return}
+  if(t.dataset.layout){layout=t.dataset.layout;render();return}
+  if(t.dataset.editm){editMember(t.dataset.editm);return}
+  if(t.dataset.dtab){dtab=t.dataset.dtab;render();return}
+  if(t.dataset.assign)return;
+  if(t.dataset.claim){const id=t.dataset.claim;if(team[id]&&!team[id].uid&&me.uid){team[id]=Object.assign({},team[id],{uid:me.uid});write("team",id,team[id]);toast("Welcome, "+team[id].name)}render();return}
+  if(t.dataset.note){const id=t.dataset.note,n=notes[id];if(n){if(!n.read){notes[id]=Object.assign({},n,{read:true});write("notes",id,notes[id])}if(n.pid&&projects[n.pid])openProject(n.pid)}render();return}
+  if(t.dataset.dashas){dashAs=dashAs===t.dataset.dashas?"":t.dataset.dashas;render();return}
+  if(t.dataset.unlink){const id=t.dataset.unlink;if(team[id]&&me.admin){const m=Object.assign({},team[id]);delete m.pw;delete m.login;delete m.uid;team[id]=m;write("team",id,m);$("#tm").classList.add("hidden");toast("Login removed")}render();return}
+  if(t.dataset.pview){pview=t.dataset.pview;render();return}
+  if(t.dataset.pfil){pfil=t.dataset.pfil;render();return}
+  if(t.dataset.ltog){const st=t.dataset.ltog,n=Object.values(projects).filter(p=>(p.stage||"lead")===st).length,cur=lopen[st]!==undefined?lopen[st]:(!(st in DROPAT)&&n>0&&n<=30);lopen[st]=!cur;render();return}
+  if(t.dataset.filter){filter=t.dataset.filter;render();return}
+  if(t.dataset.open){openProject(t.dataset.open);return}
+  if(t.dataset.copy!==undefined){navigator.clipboard.writeText(t.dataset.copy).then(()=>toast("Copied"),()=>toast("Copy not allowed here"));return}
+  if(t.dataset.delm){if(t.dataset.sure){remove("team",t.dataset.delm)}else{t.dataset.sure=1;t.textContent="Tap again";setTimeout(()=>{t.dataset.sure="";t.textContent="Remove"},3000)}return}
+  if(t.dataset.stage){cur.stage=t.dataset.stage;queue();flush();drawSheet();toast("Stage: "+SN[cur.stage]);return}
+  const a=t.dataset.act;
+  if(a==="logout"){sb&&sb.auth.signOut().then(()=>location.reload());return}
+  if(a==="chpw"){const p=window.prompt("New password (8+ characters)");if(!p)return;if(p.length<8){toast("Password needs at least 8 characters");return}sb.auth.updateUser({password:p}).then(({error})=>toast(error?("Not changed: "+error.message):"Password changed"));return}
+  if(a==="importdata"){importData();return}
+  if(a==="retryuser"){loadUser();render();return}
+  if(a==="readall"){notesFor(me.mid).forEach(([id,n])=>{if(!n.read){notes[id]=Object.assign({},n,{read:true});write("notes",id,notes[id])}});render();return}
+  if(a==="leadcheck"){leadCheck();return}
+  if(a==="goleads"){location.hash="sheet-sync";render();leadCheck();setTimeout(()=>{const x=$("#leads");if(x)x.scrollIntoView()},50);return}
+  if(a==="leadmore"){ld.show+=50;render();return}
+  if(a==="leadall"){if(t.dataset.sure){leadAcceptAll(leadShown())}else{t.dataset.sure=1;t.textContent="Tap again to import all shown"}return}
+  if(a==="setlead"){const sid=sheetIdOf(sy.form.url),tab=sy.form.tab.trim();if(!sid||!tab){sy.err="Paste a Google Sheets link and a tab name.";render();return}
+    saveSettings("leads",{sid,tab,name:"Google Sheet"});sy.form={url:"",tab:"",tabs:[]};sy.err="";ld.rows=null;render();return}
+  if(a==="synccheck"){syncCheck();return}
+  if(a==="loadtabs"){loadTabs();return}
+  if(a==="addsrc"){const sid=sheetIdOf(sy.form.url),tab=sy.form.tab.trim();if(!sid||!tab){sy.err="Paste a Google Sheets link and a tab name.";render();return}
+    const l=sources().slice();if(!l.some(x=>x.sid===sid&&x.tab===tab))l.push({sid,tab,name:"Google Sheet"});saveSettings("sync",{sources:l});sy.form={url:"",tab:"",tabs:[]};sy.err="";sy.items=null;render();return}
+  if(a==="acceptall"){if(t.dataset.sure){let n=0,sk=0;buildProps().forEach(p=>{acceptProp(p)?n++:sk++});toast("Accepted "+n+(sk?", "+sk+" need a phase":""));render()}else{t.dataset.sure=1;t.textContent="Tap again to accept all"}return}
+  if(a==="cleardec"){saveSettings("declined",{keys:{}});render();return}
+  if(a==="newtask"){editTask(null,"");return}
+  if(a==="new"){pview="leads";const id=uid();projects[id]={stage:"lead",salesId:me.admin?"":me.mid,created:new Date().toISOString(),updated:new Date().toISOString()};write("projects",id,projects[id]);openProject(id)}
+  if(a==="close")closeSheet();
+  if(a==="tmclose")$("#tm").classList.add("hidden");
+  if(a==="del"){if(t.dataset.sure){const id=openId;clearTimeout(saveT);saveT=null;openId=null;cur=null;$("#modal").classList.add("hidden");remove("projects",id)}else{t.dataset.sure=1;t.textContent="Tap again to delete"}}
+});
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")closeSheet()});
+document.addEventListener("input",e=>{if(e.target.id==="surl"){sy.form.url=e.target.value;return}if(e.target.id==="stab"){sy.form.tab=e.target.value;return}if(e.target.id==="pq"){pq=e.target.value;const pos=e.target.selectionStart;render();const q=$("#pq");if(q){q.focus();q.setSelectionRange(pos,pos)}return}if(e.target.id==="wq"){wf.q=e.target.value;const pos=e.target.selectionStart;render();const q=$("#wq");if(q){q.focus();q.setSelectionRange(pos,pos)}}});
+document.addEventListener("change",e=>{
+  if(e.target.dataset.phsel){sy.phsel[e.target.dataset.phsel]=e.target.value;render();return}
+  if(e.target.id==="wa"){wf.arch=e.target.value;render();return}
+  const k=e.target.dataset.k;
+  if(e.target.dataset.assign){const pid=e.target.dataset.assign,v=e.target.value,p=projects[pid];if(p){const d=JSON.parse(JSON.stringify(p));d.salesId=v;d.updated=new Date().toISOString();projects[pid]=d;write("projects",pid,d);if(v)notify(v,pid,"New lead assigned to you: "+(d.client||"Unnamed")+(d.phone?" ("+d.phone+")":""));toast(v?"Assigned to "+name(v):"Unassigned")}render();return}
+  if(k==="salesId"&&cur&&e.target.value&&e.target.value!==cur.salesId)notify(e.target.value,openId,"New lead assigned to you: "+(cur.client||"Unnamed")+(cur.phone?" ("+cur.phone+")":""));
+  if(k&&cur){setP(cur,k,e.target.type==="checkbox"?e.target.checked:e.target.value);queue();if(!/^(text|tel)$/.test(e.target.type)&&e.target.tagName!=="TEXTAREA")drawSheet();return}
+});
+
+function tres(t){if(!t.due)return["No date","p-n"];if(isDone(t.status))return !t.done?["Done","p-ok"]:t.done<=t.due?["Met","p-ok"]:["Late","p-bad"];return today()>t.due?["Overdue","p-bad"]:["On track","p-mid"]}
+function tRow(id,t,showProj,span){const p=projects[t.pid]||{};const r=tres(t);const rs=span>1?' rowspan="'+span+'"':'';
+  return '<tr data-editt="'+esc(id)+'" class="trow'+(showProj===1?" gfirst":"")+'">'+(showProj===1?'<td class="gcell"'+rs+'><b>'+esc(p.client||"—")+'</b><div class="mut">GD '+esc(p.gd||"")+'</div></td>':'')+'<td>'+esc(t.work||"")+(t.remark?'<div class="mut rmk">'+esc(t.remark)+'</div>':'')+'</td><td>'+esc(name(t.arch)||"—")+(t.draft&&t.draft!==t.arch&&name(t.draft)?'<div class="mut rmk">Drafting: '+esc(name(t.draft))+'</div>':'')+'</td>'+(showProj===1?'<td class="gcell"'+rs+'>'+esc(name(p.salesId)||"—")+'</td>':'')+'<td style="white-space:nowrap">'+esc(t.due||"—")+'</td><td><span class="pill '+(isDone(t.status)?"p-ok":"p-n")+'">'+esc(t.status||"Not started")+'</span></td><td><span class="pill '+r[1]+'">'+r[0]+'</span></td><td><button class="sm">Edit</button></td></tr>'}
+function vWork(){
+  const archs=people(ARCHRE);
+  let list=Object.entries(tasks).filter(([,t])=>scopeAll()||t.arch===me.mid||t.draft===me.mid||(projects[t.pid]||{}).salesId===me.mid).filter(([,t])=>(!wf.arch||t.arch===wf.arch||t.draft===wf.arch)&&(wf.st==="all"||(wf.st==="open"?!isDone(t.status):isDone(t.status))));
+  if(wf.q){const q=wf.q.toLowerCase();list=list.filter(([,t])=>{const p=projects[t.pid]||{};return ((p.client||"")+" "+(p.gd||"")+" "+(t.work||"")).toLowerCase().includes(q)})}
+  const gm={};list.forEach(x=>{(gm[x[1].pid]=gm[x[1].pid]||[]).push(x)});
+  const pix=k=>PHASES.findIndex(x=>x[0]===k),minDue=g=>g.reduce((m,x)=>(x[1].due||"9999")<m?(x[1].due||"9999"):m,"9999");
+  const groups=Object.values(gm).sort((a,b)=>minDue(a).localeCompare(minDue(b)));
+  groups.forEach(g=>g.sort((a,b)=>pix(a[1].key)-pix(b[1].key)||(a[1].due||"9999").localeCompare(b[1].due||"9999")));
+  const all=Object.values(tasks),od=all.filter(t=>tres(t)[0]==="Overdue").length;
+  let h='<div class="row"><h2 style="margin:0">Work list</h2><span class="sp"></span><button class="pri" data-act="newtask">+ Add work</button></div>';
+  h+='<div class="kpis" style="margin-top:12px">'+[["Open",all.filter(t=>!isDone(t.status)).length],["Overdue",od],["Done",all.filter(t=>isDone(t.status)).length],["Total",all.length]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v"'+(l==="Overdue"&&v?' style="color:var(--bad)"':'')+'>'+v+'</div></div>').join("")+'</div>';
+  h+='<div class="row wfil"><input id="wq" placeholder="Search client, GD or work" value="'+esc(wf.q)+'" style="max-width:260px"><select id="wa" style="max-width:220px">'+opt(archs,wf.arch,"All architects")+'</select><div class="seg2">'+[["open","Open"],["done","Done"],["all","All"]].map(([k,l])=>'<button class="'+(wf.st===k?"on":"")+'" data-wst="'+k+'">'+l+'</button>').join("")+'</div></div>';
+  if(!list.length)return h+'<div class="card empty" style="margin-top:10px">No work items here.</div>';
+  return h+'<div class="card" style="margin-top:10px;padding:6px 10px"><div class="tw"><table><tr><th>Project</th><th>Work</th><th>Assigned architect</th><th>Sales</th><th>Delivery date</th><th>Status</th><th>Result</th><th></th></tr>'+groups.map(g=>g.map(([id,t],i)=>tRow(id,t,i?2:1,g.length)).join("")).join("")+'</table></div></div>';
+}
+function editTask(id,pid,key){const t=id?tasks[id]:{pid:pid||"",key:key||"",status:"Not started"};if(!t)return;
+  const projs=Object.entries(projects).sort((a,b)=>(a[1].client||"").localeCompare(b[1].client||"")).map(([k,p])=>[k,(p.client||"Unnamed")+" (GD "+(p.gd||"?")+")"]);
+  const archs=people(ARCHRE),sel=(n,v,l)=>'<select name="'+n+'">'+opt(l,v,"—")+'</select>';
+  $("#tmsheet").innerHTML='<div class="row"><h2 style="margin:0">'+(id?"Edit work":"Add work")+'</h2><span class="sp"></span><button data-act="tmclose">Close</button></div><form id="editt" data-id="'+esc(id||"")+'">'+
+   '<label class="f">Project</label><select name="pid" required>'+opt(projs,t.pid,"Select project")+'</select>'+
+   '<label class="f">Design phase</label><select name="key" required>'+opt(PHASES,t.key,"Select phase")+'</select>'+
+   '<label class="f">Work name (optional)</label><input name="title" value="'+esc(t.title)+'" placeholder="2D revision submission">'+
+   '<div class="g2"><div><label class="f">Assigned architect</label>'+sel("arch",t.arch,archs)+'</div><div><label class="f">Drafting (optional)</label>'+sel("draft",t.draft,archs)+'</div>'+
+   '<div><label class="f">Delivery date</label><input type="date" name="due" value="'+esc(t.due)+'"></div><div><label class="f">Status</label><select name="status">'+opt(PST,t.status||"Not started")+'</select></div>'+
+   '<div><label class="f">Done on</label><input type="date" name="done" value="'+esc(t.done)+'"></div><div></div></div>'+
+   '<label class="f">Remark</label><textarea name="remark" rows="3">'+esc(t.remark)+'</textarea><div id="terr" class="mut" style="color:var(--bad)"></div>'+
+   '<div class="row" style="margin-top:14px">'+(id?'<button type="button" class="danger sm" data-delt="'+esc(id)+'">Delete</button>':'')+'<span class="sp"></span><button type="button" data-act="tmclose">Cancel</button><button class="pri">Save</button></div></form>';
+  $("#tm").classList.remove("hidden");
+}
+function saveProject(pid,mut){if(openId===pid){flush();mut(cur);cur.updated=new Date().toISOString();projects[pid]=cur;write("projects",pid,JSON.parse(JSON.stringify(cur)));drawSheet()}else{const p=JSON.parse(JSON.stringify(projects[pid]||{}));mut(p);p.updated=new Date().toISOString();projects[pid]=p;write("projects",pid,p)}render()}
+
+function editMember(id){const m=team[id];if(!m)return;
+  const rl=ROLES.includes(m.role)?ROLES:ROLES.concat([m.role]);
+  $("#tmsheet").innerHTML='<div class="row"><h2 style="margin:0">Edit team member</h2><span class="sp"></span><button data-act="tmclose">Close</button></div><form id="editm" data-id="'+esc(id)+'"><label class="f">Name</label><input name="name" required value="'+esc(m.name)+'"><label class="f">Designation</label><select name="role">'+roleOpts(m.role)+'</select><label class="f">Email</label><input name="email" type="email" value="'+esc(m.email)+'"><label class="f">WhatsApp number</label><input name="wa" value="'+esc(m.wa)+'" placeholder="+8801…"><label class="f">Also called (nicknames used in sheets, comma separated)</label><input name="aka" value="'+esc(m.aka)+'" placeholder="Pooja">'+(me.admin?'<div class="ubox"><b>User login</b><div class="g2"><div><label class="f">User ID</label><input name="login" value="'+esc(m.login)+'" autocomplete="off" placeholder="labib"></div><div><label class="f">'+(m.pw?"New password (blank keeps the current one)":"Password")+'</label><input name="newpw" autocomplete="off" placeholder="'+(m.pw?"unchanged":"at least 6 characters")+'"></div></div><label class="f" style="margin-top:10px">Sections this user can open</label><div class="pchk">'+SECS.map(([k,l])=>'<label><input type="checkbox" name="perm_'+k+'"'+((m.perms||DEFPERM).includes(k)?" checked":"")+'> '+l+'</label>').join("")+'</div><label class="f">Data this user sees</label><select name="scope"><option value="own"'+(m.scope==="all"?"":" selected")+'>Only their own leads, projects and work</option><option value="all"'+(m.scope==="all"?" selected":"")+'>Everything</option></select><label class="f" style="margin-top:10px"><input type="checkbox" name="admin"'+(m.admin?" checked":"")+'> Admin (all sections, all data, assigns leads, manages users)</label>'+(m.pw?'<div style="margin-top:8px"><button type="button" class="sm danger" data-unlink="'+esc(id)+'">Remove login</button></div>':'')+'</div>':'')+'<div class="row" style="margin-top:14px"><span class="sp"></span><button type="button" data-act="tmclose">Cancel</button><button class="pri">Save changes</button></div></form>';
+  $("#tm").classList.remove("hidden");
+}
+$("#tm").addEventListener("click",e=>{if(e.target.id==="tm")$("#tm").classList.add("hidden")});
+document.addEventListener("submit",e=>{
+  if(e.target.id==="editt"){e.preventDefault();const f=new FormData(e.target),id=e.target.dataset.id,pid=f.get("pid"),k=f.get("key");
+    if(!pid||!k)return;const [op,ok]=id?id.split("~"):["",""];
+    const tk=(id&&op===pid&&phOf(ok)===k)?ok:freeKey(projects[pid],k);
+    const old=id?JSON.parse(JSON.stringify(getP(projects[op],"del."+ok)||{})):{};
+    if(id&&!(op===pid&&ok===tk))saveProject(op,p=>{if(p.del)delete p.del[ok]});
+    saveProject(pid,p=>{p.del=p.del||{};const d=Object.assign(old,{title:(f.get("title")||"").trim(),a1:f.get("arch")||"",a2:f.get("draft")||"",deadline:f.get("due")||"",status:f.get("status")||"Not started",done:f.get("done")||"",remark:(f.get("remark")||"").trim()});p.del[tk]=d});
+    $("#tm").classList.add("hidden");toast("Saved");return}
+  if(e.target.id==="editm"){e.preventDefault();const id=e.target.dataset.id,f=new FormData(e.target);
+    const m={...team[id],name:f.get("name").trim(),role:f.get("role"),email:f.get("email").trim(),wa:f.get("wa").trim(),aka:(f.get("aka")||"").trim()};
+    if(!m.name)return;const np=(f.get("newpw")||"").trim();
+    if(me.admin){m.admin=!!f.get("admin");m.login=(f.get("login")||"").trim().toLowerCase();m.perms=SECS.map(x=>x[0]).filter(k=>f.get("perm_"+k));m.scope=f.get("scope")==="all"?"all":"own";
+      if(m.login&&Object.entries(team).some(([k,x])=>k!==id&&x.login===m.login)){toast("That user ID is already used");return}
+      if(np&&np.length<8){toast("Password needs at least 8 characters");return}
+      if(np&&!m.login){toast("Set a user ID first");return}}
+    const save=()=>{team[id]=m;$("#tm").classList.add("hidden");render();if(db)db.doc("team/"+id).set(m).then(()=>toast("Saved: "+m.name),err=>toast("Not saved: "+(err&&err.message||"you need edit access")));else toast("Saved on this screen only")};
+    delete m.pw;
+    if(me.admin&&np){if(m.uid&&team[id]&&team[id].login===m.login){toast("This member already has a login. They can change their password after logging in (Password button). To reset it, delete the user in Supabase, Authentication, Users, then set it here again.");return}
+      const tmp=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:"gds-tmp"}});
+      tmp.auth.signUp({email:toEmail(m.login),password:np}).then(({data,error})=>{if(error){toast(/registered/i.test(error.message)?"That user ID already has a login. Delete it in Supabase, Authentication, Users first.":"Login not created: "+error.message);return}
+        if(!data||!data.user||!data.session){toast("Turn off Confirm email in Supabase first (Authentication, Sign In / Providers, Email)");return}
+        m.uid=data.user.id;tmp.auth.signOut();save()})}else save();
+    return}
+  if(e.target.id==="loginf"){e.preventDefault();const f=new FormData(e.target);loginErr="";
+    sb.auth.signInWithPassword({email:toEmail(f.get("login")),password:f.get("pw")||""}).then(({error})=>{if(error){loginErr=/invalid/i.test(error.message)?"Wrong ID or password.":error.message;render()}});return}
+  if(e.target.id==="setupf"){e.preventDefault();const f=new FormData(e.target);
+    sb.auth.signUp({email:String(f.get("email")).trim().toLowerCase(),password:f.get("pw")||""}).then(({data,error})=>{if(error){loginErr=error.message;render();return}if(data&&!data.session){loginErr="Account created but email confirmation is on. Turn off Confirm email in Supabase (Authentication, Sign In / Providers, Email), delete this user there, and try again.";render()}});return}
+  if(e.target.id!=="addm")return;e.preventDefault();
+  const f=new FormData(e.target),id=uid(),m={name:f.get("name").trim(),role:f.get("role"),email:f.get("email").trim(),wa:f.get("wa").trim(),aka:(f.get("aka")||"").trim()};
+  if(!m.name)return;team[id]=m;write("team",id,m);render();toast("Added "+m.name);
+});
+let dragId=null;
+document.addEventListener("dragstart",e=>{const c=e.target.closest&&e.target.closest("[data-drag]");if(!c)return;dragId=c.dataset.drag;c.classList.add("dragging");try{e.dataTransfer.setData("text/plain",dragId)}catch(x){}});
+document.addEventListener("dragend",e=>{document.querySelectorAll(".dragging,.over").forEach(x=>x.classList.remove("dragging","over"))});
+document.addEventListener("dragover",e=>{const c=e.target.closest&&e.target.closest("[data-drop]");if(!c||!dragId)return;e.preventDefault();document.querySelectorAll(".col.over").forEach(x=>x!==c&&x.classList.remove("over"));c.classList.add("over")});
+document.addEventListener("drop",e=>{const c=e.target.closest&&e.target.closest("[data-drop]");if(!c||!dragId)return;e.preventDefault();const p=projects[dragId];
+  if(p&&p.stage!==c.dataset.drop){p.stage=c.dataset.drop;p.updated=new Date().toISOString();write("projects",dragId,p);toast((p.client||"Project")+" → "+SN[p.stage])}dragId=null;render()});
+window.addEventListener("hashchange",render);
+init();
+</script>
+</body>
+</html>
