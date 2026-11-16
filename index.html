@@ -201,6 +201,7 @@ nav .who .lo{background:transparent;border:1px solid #6b5a4f;color:#CDBBA6;paddi
 <div id="modal" class="modal hidden"><div class="sheet" id="sheet"></div></div>
 <div id="tm" class="modal hidden"><div class="sheet" style="max-width:520px" id="tmsheet"></div></div>
 <div id="toast" class="toast hidden"></div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
 <script>
 /* ---------- Supabase config (publishable key is safe to be public; data is protected by row-level security) ---------- */
@@ -332,7 +333,7 @@ function vSalesTeam(){const ids=Object.keys(team).filter(id=>SALESRE.test(team[i
   h+='</div>';
   if(dashAs&&team[dashAs])h+='<div class="card" style="margin-top:10px;border-left:4px solid var(--acc)"><div class="mut">Dashboard of</div><h2>'+esc(team[dashAs].name)+'</h2>'+vMy(dashAs,true)+'</div>';
   return h}
-async function autoLeadCheck(){if(autoChk||!me.ready||!me.admin||!db||!setLoaded||!projLoaded||!leadSrc()||ld.rows!==null||ld.busy||imp.on)return;autoChk=true;
+async function autoLeadCheck(){if(!(gTok&&Date.now()<gExp-60000))return;if(autoChk||!me.ready||!me.admin||!db||!setLoaded||!projLoaded||!leadSrc()||ld.rows!==null||ld.busy||imp.on)return;autoChk=true;
   const mcp=await getMcp();if(!mcp)return;try{const s=leadSrc(),res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:AG5001"},{cache:false});const rows=parseLeads(payloadOf(res).values);if(rows){ld.rows=rows;ld.at=new Date().toLocaleString();render()}}catch(e){}}
 function view(){const h=(location.hash||"").slice(1),ok=allowed();return ok.includes(h)?h:ok[0]}
 function render(){
@@ -520,18 +521,34 @@ function buildProps(){const items=curItems(),seen={},S=[];
     props.push({kind:"new",pid,it:its[0],its,id:hash("new|"+its[0].gdn+"|"+ph+"|"+its.map(i=>i.date+norm(i.work)).join("|"))})});
   const dec=declined();return props.filter(p=>!dec[p.id])}
 function mcpMsg(e){const c=e&&e.code;
-  if(c==="needs_reauth")return"Google Sheets needs to be reconnected. Reconnect it in claude.ai Settings, Connectors, then try again.";
+  if(c==="no_client")return"Google Sheets is not set up yet. Paste the Google Client ID in Google connection at the top of this page.";
+  if(c==="no_gis")return"Google sign-in did not load. Check your internet connection or ad blocker, reload the page and try again.";
+  if(c==="consent_required")return"Google sign-in was closed or blocked. Allow pop-ups for this site, tap again and choose your Google account.";
+  if(c==="needs_reauth")return"Google sign-in expired. Tap again and sign in.";
   if(c==="server_not_connected"||c==="selection_required")return"Google Sheets is not connected for your account. Add it in claude.ai Settings, Connectors, then try again.";
   if(c==="not_in_manifest"||c==="consent_required"||c==="approval_required")return"This app is not allowed to read Google Sheets for you yet. Tap Check sheets again and choose Allow.";
   if(c==="blocked_by_policy")return"Your organization blocks Google Sheets for this app.";
-  if(c==="tool_error")return"Google Sheets could not read that sheet. Check the link and tab name, and that your Google account can open it.";
+  if(c==="tool_error")return"Google Sheets could not read that sheet. Check the link and tab name, and that the Google account you signed in with can open it.";
   if(c==="not_granted"||c==="capability_disabled"||c==="capability_removed")return"Google Sheet sync works only in the claude.ai version of this app.";
   return"Could not reach Google Sheets just now. Try again in a moment."}
 function payloadOf(res){let p=res&&res.payload;if(typeof p==="string"){try{p=JSON.parse(p)}catch(x){p={}}}p=p||{};return p.content&&typeof p.content==="object"&&!Array.isArray(p.content)?p.content:p}
-async function getMcp(){try{return window.claude&&window.claude.use?await window.claude.use("mcp"):null}catch(x){return null}}
+/* Google Sheets: read directly with the signed-in admin's own Google account (read-only) */
+let gTok="",gExp=0;
+const gClientId=()=>((settings.google||{}).clientId||"").trim();
+function gToken(){return new Promise((res,rej)=>{if(gTok&&Date.now()<gExp-60000)return res(gTok);
+  if(!gClientId())return rej({code:"no_client"});
+  if(!window.google||!google.accounts||!google.accounts.oauth2)return rej({code:"no_gis"});
+  try{google.accounts.oauth2.initTokenClient({client_id:gClientId(),scope:"https://www.googleapis.com/auth/spreadsheets.readonly",
+    callback:r=>{if(!r||r.error||!r.access_token)return rej({code:"consent_required"});gTok=r.access_token;gExp=Date.now()+(Number(r.expires_in)||3600)*1000;render();res(gTok)},
+    error_callback:()=>rej({code:"consent_required"})}).requestAccessToken()}catch(e){rej({code:"no_gis"})}})}
+async function gGet(url){const t=await gToken();const r=await fetch(url,{headers:{Authorization:"Bearer "+t}});
+  if(r.status===401){gTok="";throw{code:"needs_reauth"}}if(!r.ok)throw{code:"tool_error"};return r.json()}
+async function getMcp(){return{callTool:async(srv,tool,a)=>{const base="https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(a.spreadsheetId);
+  if(tool==="get_values")return{payload:await gGet(base+"/values/"+encodeURIComponent(a.range))};
+  if(tool==="get_spreadsheet")return{payload:await gGet(base+"?fields=sheets.properties.title")};throw{code:"tool_error"}}}}
 async function syncCheck(){if(sy.busy)return;const srcs=sources();if(!srcs.length){sy.err="Add a Google Sheet first.";render();return}
   sy.busy=true;sy.err="";sy.warn=[];render();
-  const mcp=await getMcp();if(!mcp){sy.busy=false;sy.err="Google Sheet sync works only in the claude.ai version of this app. Run the sync there; the results will not appear here automatically.";render();return}
+  const mcp=await getMcp();if(!mcp){sy.busy=false;sy.err="Google Sheets is not set up yet.";render();return}
   const all=[];let fail=0,lastErr=null;
   for(const s of srcs){try{const res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:L1000"},{cache:false});
       const rows=parseSheet(payloadOf(res).values,s.tab);if(rows===null)sy.warn.push('"'+s.tab+'": no header row with GD NO. and Work List was found.');else all.push(...rows)}
@@ -637,7 +654,9 @@ function vLeads(){const s=leadSrc();
   h+='<div class="card" style="padding:4px 10px"><div class="tw"><table><tr><th>Client</th><th>Phone</th><th>Sales</th><th>Source</th><th>Stage</th><th></th></tr>'+list.slice(0,ld.show).map(p=>{const r=p.r;return '<tr><td><b>'+esc(r.client)+'</b><div class="mut rmk">'+esc([r.ptype,r.loc].filter(Boolean).join(" · "))+'</div></td><td style="white-space:nowrap">'+esc(r.phone||"—")+'</td><td>'+(r.salesId?esc(name(r.salesId)):r.sales?'<span class="pill p-mid">Unknown: '+esc(r.sales)+'</span>':'—')+'</td><td>'+esc(r.source||"—")+'</td><td>'+(p.kind==="chg"?'<s class="mut">'+esc(SN[p.from])+'</s> → ':'')+'<span class="pill '+stageCls(r.st)+'">'+esc(SN[r.st])+'</span></td><td style="white-space:nowrap"><button class="sm pri" data-lacc="'+p.id+'">Accept</button> <button class="sm" data-ldec="'+p.id+'">Decline</button></td></tr>'}).join("")+'</table></div></div>';
   if(list.length>ld.show)h+='<div class="links"><button class="sm" data-act="leadmore">Show 50 more</button></div>';
   return h}
-function vSync(){return vSyncWork()+vLeads()}
+function vGoogle(){const id=gClientId(),on=gTok&&Date.now()<gExp-60000;
+  return '<div class="card" style="margin-bottom:12px"><div class="row"><b>Google connection</b>'+(id?(on?'<span class="pill p-ok">Signed in to Google</span>':'<span class="pill p-n">Not signed in</span>'):'<span class="pill p-bad">Not set up</span>')+'<span class="sp"></span>'+(id&&!on?'<button class="sm" data-act="gsignin">Sign in with Google</button>':'')+'</div><div class="mut rmk" style="margin:4px 0 8px">Sheets are read with your own Google account, read-only. Nothing is written to your sheets.</div><div class="row"><input id="gcid" style="flex:1;min-width:240px" placeholder="Google OAuth Client ID (….apps.googleusercontent.com)" value="'+esc(id)+'"><button class="sm" data-act="gcidsave">Save</button></div></div>'}
+function vSync(){return vGoogle()+vSyncWork()+vLeads()}
 let setLoaded=false,projLoaded=false,imp={on:false,n:0,of:0,done:false};
 async function maybeImport(){if(imp.on||imp.done||!db||!setLoaded||!projLoaded||settings.leadsImported)return;imp.on=true;
   let data=null;try{const r=await fetch("leads-import.json",{cache:"no-store"});if(r.ok)data=await r.json()}catch(e){}
@@ -780,6 +799,8 @@ document.addEventListener("click",e=>{
   if(a==="setlead"){const sid=sheetIdOf(sy.form.url),tab=sy.form.tab.trim();if(!sid||!tab){sy.err="Paste a Google Sheets link and a tab name.";render();return}
     saveSettings("leads",{sid,tab,name:"Google Sheet"});sy.form={url:"",tab:"",tabs:[]};sy.err="";ld.rows=null;render();return}
   if(a==="synccheck"){syncCheck();return}
+  if(a==="gcidsave"){const v=($("#gcid").value||"").trim();if(v&&!/\.apps\.googleusercontent\.com$/.test(v)){toast("That does not look like a Google Client ID");return}gTok="";saveSettings("google",{clientId:v});render();toast("Saved");return}
+  if(a==="gsignin"){gToken().then(()=>toast("Signed in to Google"),e=>{sy.err=mcpMsg(e);render()});return}
   if(a==="loadtabs"){loadTabs();return}
   if(a==="addsrc"){const sid=sheetIdOf(sy.form.url),tab=sy.form.tab.trim();if(!sid||!tab){sy.err="Paste a Google Sheets link and a tab name.";render();return}
     const l=sources().slice();if(!l.some(x=>x.sid===sid&&x.tab===tab))l.push({sid,tab,name:"Google Sheet"});saveSettings("sync",{sources:l});sy.form={url:"",tab:"",tabs:[]};sy.err="";sy.items=null;render();return}
