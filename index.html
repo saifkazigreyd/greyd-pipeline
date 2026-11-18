@@ -189,6 +189,7 @@ select.asg{padding:4px 6px;font-size:13px;max-width:190px}
 nav .who .lo{background:transparent;border:1px solid #6b5a4f;color:#CDBBA6;padding:2px 8px;font-size:11px;margin-left:8px}
 .nx{color:var(--ink);font-size:13px;margin-bottom:4px}.nx:last-child{margin-bottom:0}
 .tabtag{display:inline-block;margin-top:3px;font-size:11px;padding:1px 7px;border-radius:10px;background:rgba(127,127,127,.13);color:var(--mut)}
+.alink{color:inherit;font-weight:600;text-decoration:underline;text-decoration-color:rgba(127,127,127,.45);text-underline-offset:3px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -287,7 +288,7 @@ async function init(){
 }
 /* ---------- views ---------- */
 /* ---------- users, roles, notifications ---------- */
-let me={ready:false,uid:"",owner:false,mid:"",admin:false,nouser:false},notes={},dashAs="",autoChk=false;
+let me={ready:false,uid:"",owner:false,mid:"",admin:false,nouser:false},notes={},dashAs="",archAs="",autoChk=false;
 let CL=null;
 function loadUser(){return;me.ready=false;me.nouser=false;Promise.resolve().then(()=>CL.use("user")).then(async u=>{if(u){me.uid=String((await u.id())||"");me.owner=!!(await u.isOwner());if(!me.uid&&!me.owner)me.nouser=true}else me.nouser=true}).catch(()=>{me.nouser=true}).then(()=>{me.ready=true;render()})}
 const SECS=[["my","My dashboard"],["pipeline","Pipeline"],["work","Work list"],["dashboard","Dashboard"],["sheet-sync","Sheet sync"],["team","Team"]],DEFPERM=["my","pipeline","work"];
@@ -403,6 +404,14 @@ function lrow(id,p){const val=pval(p);
 function projState(p){if(p.stage==="completed")return"on";const mid=!scopeAll()&&me.mid&&p.salesId!==me.mid?me.mid:"";
   const doer=d=>d.a2&&d.a2!==d.a1?d.a2:d.a1,all=entries(p).map(([,d])=>d),own=mid?all.filter(d=>doer(d)===mid):all,items=own.length?own:all;
   return items.some(d=>isDone(d.status)||(d.status||"Not started")!=="Not started")?"on":"up"}
+/* Details for one architect in Architect performance: completed, on process, upcoming, late. */
+function archDetail(id,rs){const uniq=l=>l.filter((r,i,a)=>a.findIndex(x=>x.tid===r.tid)===i),byDl=(a,b)=>(a.dl||"9999").localeCompare(b.dl||"9999");
+  const own=uniq(rs.filter(r=>r.arch===id)),late=uniq(rs.filter(r=>(r.arch===id||r.lead===id)&&r.res[1]==="p-bad")).sort(byDl);
+  const done=own.filter(r=>isDone(r.st)).sort((a,b)=>(b.dn||b.dl||"").localeCompare(a.dn||a.dl||"")),open=own.filter(r=>!isDone(r.st)),onP=open.filter(r=>r.st!=="Not started").sort(byDl),up=open.filter(r=>r.st==="Not started").sort(byDl);
+  const row=r=>'<tr data-editt="'+esc(r.tid)+'" style="cursor:pointer"><td style="white-space:nowrap">'+esc(r.dl||"—")+'</td><td style="white-space:nowrap">'+esc(r.dn||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span>'+(r.arch!==id?'<div class="mut rmk">Drafter: '+esc(name(r.arch)||"")+'</div>':'')+'</td><td>'+esc(r.phase)+'</td><td>'+esc(r.st)+'</td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>';
+  const sec=(t,cls,l,empty)=>'<h3 style="margin:14px 0 6px">'+t+' <span class="pill '+cls+'">'+l.length+'</span></h3>'+(l.length?'<div class="tw"><table><tr><th>Deadline</th><th>Done on</th><th>Project</th><th>Phase</th><th>Status</th><th>Result</th></tr>'+l.map(row).join("")+'</table></div>':'<div class="mut">'+empty+'</div>');
+  return '<div class="card" style="margin-top:10px;border-left:4px solid var(--acc)"><div class="row"><div><div class="mut">Architect details</div><h2 style="margin:0">'+esc(name(id)||"Removed member")+'</h2></div><span class="sp"></span><button class="sm" data-archas="'+esc(id)+'">Close</button></div>'+
+    sec("Late / overdue","p-bad",late,"Nothing late.")+sec("On process","p-mid",onP,"No work on process.")+sec("Upcoming","p-n",up,"Nothing waiting to start.")+sec("Completed","p-ok",done,"Nothing completed yet.")+'</div>'}
 function vPipeline(){
   const q=pq.toLowerCase(),hit=p=>!q||((p.client||"")+" "+(p.gd||"")+" "+(p.phone||"")).toLowerCase().includes(q);
   const all=visProjects(),isLead=p=>LEADST.includes(p.stage||"lead");
@@ -457,7 +466,8 @@ function vDashArch(){
   h+='<div class="card"><h2>Architect performance</h2><div class="mut" style="margin:-6px 0 8px">Each phase of a project counts once per person, even with several work items in it. If a drafter is set, the work and the project count only for the drafter, not for the project architect; otherwise for the assigned architect. A late or overdue item still counts as late for its project architect. Best performer: most deadlines met, then fewest late or overdue.</div>';
   const ks=Object.keys(m).sort((x,y)=>m[y].ok-m[x].ok||m[x].bad-m[y].bad||m[y].c-m[x].c||(name(x)||"").localeCompare(name(y)||""));
   const top=ks.length&&m[ks[0]].ok>0?m[ks[0]]:null,isBest=a=>top&&a.ok===top.ok&&a.bad===top.bad&&a.c===top.c;
-  h+=ks.length?'<div class="tw"><table><tr><th>Architect</th><th>Projects</th><th>Completed</th><th>In progress</th><th>Not started</th><th>Met</th><th>Late / overdue</th></tr>'+ks.map(k=>{const a=m[k];return '<tr'+(isBest(a)?' class="best"':'')+'><td>'+esc(name(k)||"Removed member")+(isBest(a)?' <span class="pill bestp">★ Best performer</span>':'')+'</td><td>'+a.p.size+'</td><td>'+a.c+'</td><td>'+a.q+'</td><td>'+a.ns+'</td><td>'+a.ok+'</td><td>'+(a.bad?'<span class="pill p-bad">'+a.bad+'</span>':0)+'</td></tr>'}).join("")+'</table></div>':'<div class="mut">Assign architects to deliverables inside a project to see this.</div>';
+  h+=ks.length?'<div class="tw"><table><tr><th>Architect</th><th>Projects</th><th>Completed</th><th>In progress</th><th>Not started</th><th>Met</th><th>Late / overdue</th></tr>'+ks.map(k=>{const a=m[k];return '<tr'+(isBest(a)?' class="best"':'')+(archAs===k?' style="background:rgba(127,127,127,.08)"':'')+'><td><a href="javascript:void 0" class="alink" data-archas="'+esc(k)+'">'+esc(name(k)||"Removed member")+' '+(archAs===k?'▴':'▾')+'</a>'+(isBest(a)?' <span class="pill bestp">★ Best performer</span>':'')+'</td><td>'+a.p.size+'</td><td>'+a.c+'</td><td>'+a.q+'</td><td>'+a.ns+'</td><td>'+a.ok+'</td><td>'+(a.bad?'<span class="pill p-bad">'+a.bad+'</span>':0)+'</td></tr>'}).join("")+'</table></div>':'<div class="mut">Assign architects to deliverables inside a project to see this.</div>';
+  if(archAs)h+=archDetail(archAs,rs);
   h+='</div><div class="card" style="margin-top:10px"><h2>Pending deliverables</h2>';
   const due=rs.filter((r,i,a)=>!isDone(r.st)&&(!r.tid||a.findIndex(x=>x.tid===r.tid)===i)).sort((a,b)=>(a.dl||"9999").localeCompare(b.dl||"9999"));
   h+=due.length?'<div class="tw"><table><tr><th>Deadline</th><th>Project</th><th>Phase</th><th>Architect</th><th>Status</th><th></th></tr>'+due.map(r=>'<tr '+(r.tid?'data-editt="'+esc(r.tid)+'"':'data-open="'+esc(r.pid)+'"')+' style="cursor:pointer"><td>'+esc(r.dl||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(name(r.arch))+'</td><td><span class="pill '+(r.st==="Not started"?"p-n":"p-mid")+'">'+esc(r.st)+'</span></td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>').join("")+'</table></div>':'<div class="mut">Nothing pending.</div>';
@@ -789,7 +799,7 @@ function flush(){if(!saveT||!openId)return;clearTimeout(saveT);saveT=null;write(
 
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{
-  const t=e.target.closest("[data-dtab],[data-assign],[data-claim],[data-note],[data-dashas],[data-unlink],[data-pview],[data-pfil],[data-ltog],[data-lacc],[data-ldec],[data-lf],[data-acc],[data-dec],[data-delsrc],[data-editph],[data-editt],[data-delt],[data-wst],[data-newt],[data-layout],[data-act],[data-filter],[data-open],[data-stage],[data-delm],[data-copy],[data-editm]");
+  const t=e.target.closest("[data-dtab],[data-assign],[data-claim],[data-note],[data-dashas],[data-archas],[data-unlink],[data-pview],[data-pfil],[data-ltog],[data-lacc],[data-ldec],[data-lf],[data-acc],[data-dec],[data-delsrc],[data-editph],[data-editt],[data-delt],[data-wst],[data-newt],[data-layout],[data-act],[data-filter],[data-open],[data-stage],[data-delm],[data-copy],[data-editm]");
   if(!t)return;
   if(t.dataset.lacc){const p=buildLeadProps().find(x=>x.id===t.dataset.lacc);if(p){const [id,doc]=leadApply(p);write("projects",id,doc);if(p.kind==="new"&&doc.salesId)notify(doc.salesId,id,"New lead assigned to you: "+doc.client+(doc.phone?" ("+doc.phone+")":""));toast("Accepted")}render();return}
   if(t.dataset.ldec){declineProp(t.dataset.ldec);render();return}
@@ -809,6 +819,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.claim){const id=t.dataset.claim;if(team[id]&&!team[id].uid&&me.uid){team[id]=Object.assign({},team[id],{uid:me.uid});write("team",id,team[id]);toast("Welcome, "+team[id].name)}render();return}
   if(t.dataset.note){const id=t.dataset.note,n=notes[id];if(n){if(!n.read){notes[id]=Object.assign({},n,{read:true});write("notes",id,notes[id])}if(n.pid&&projects[n.pid])openProject(n.pid)}render();return}
   if(t.dataset.dashas){dashAs=dashAs===t.dataset.dashas?"":t.dataset.dashas;render();return}
+  if(t.dataset.archas!==undefined){archAs=archAs===t.dataset.archas?"":t.dataset.archas;render();return}
   if(t.dataset.unlink){const id=t.dataset.unlink;if(team[id]&&me.admin){const m=Object.assign({},team[id]);delete m.pw;delete m.login;delete m.uid;team[id]=m;write("team",id,m);$("#tm").classList.add("hidden");toast("Login removed")}render();return}
   if(t.dataset.pview){pview=t.dataset.pview;render();return}
   if(t.dataset.pfil){pfil=t.dataset.pfil;render();return}
