@@ -320,7 +320,7 @@ function vMy(mid,preview){mid=mid||me.mid;const m=team[mid];if(!m)return '<div c
   if(isSales){h+='<h2 style="margin-top:16px">Leads & sales</h2><div class="kpis">'+[["Active leads",s.active],["New, to contact",s.fresh],["Potential",s.pot],["Meetings",s.meet],["Quotation & negotiation",s.qn],["Quoted value",money(s.qnv)],["Deals won",s.won],["Won value",money(s.wonv)],["Dropped",s.lost]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v">'+v+'</div></div>').join("")+'</div>';
     const hot=s.L.filter(([,p])=>["meeting","meetingdone","quotation","negotiation"].includes(p.stage)).sort((a,b)=>FLOW.indexOf(b[1].stage)-FLOW.indexOf(a[1].stage)).slice(0,12);
     h+='<div class="card"><b>Follow up next</b>'+(hot.length?'<div class="tw"><table><tr><th>Client</th><th>Phone</th><th>Stage</th><th>Value</th><th>Next step</th></tr>'+hot.map(([id,p])=>'<tr data-open="'+esc(id)+'" style="cursor:pointer"><td><b>'+esc(p.client||"")+'</b></td><td>'+esc(p.phone||"—")+'</td><td><span class="pill '+stageCls(p.stage)+'">'+esc(SN[p.stage])+'</span></td><td>'+(pval(p)?money(pval(p)):"—")+'</td><td class="ln">'+esc(NEXT[p.stage]||"")+'</td></tr>').join("")+'</table></div>':'<div class="mut" style="margin-top:6px">No leads in meeting, quotation or negotiation right now.</div>')+'</div>'}
-  const rs=results().filter(r=>r.arch===mid||r.lead===mid);
+  const rs=results().filter(r=>r.arch===mid);
   if(rs.length||ARCHRE.test(m.role||"")){const pend=rs.filter(r=>!isDone(r.st)),od=pend.filter(r=>r.res[1]==="p-bad");
     h+='<h2 style="margin-top:16px">Design work</h2><div class="kpis">'+[["Pending",pend.length],["Overdue",od.length],["Completed",rs.filter(r=>isDone(r.st)).length],["Deadlines met",rs.filter(r=>r.res[0]==="Deadline met").length]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v"'+(l==="Overdue"&&v?' style="color:var(--bad)"':'')+'>'+v+'</div></div>').join("")+'</div>';
     const prow2=r=>'<tr data-editt="'+esc(r.tid)+'" style="cursor:pointer"><td>'+esc(r.dl||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(r.st)+'</td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>';
@@ -401,7 +401,7 @@ function lrow(id,p){const val=pval(p);
 /* A project is "on process" once any of its work has started (or is done); before that it is "upcoming".
    For someone who only sees their own work, it is judged on the work assigned to them. */
 function projState(p){if(p.stage==="completed")return"on";const mid=!scopeAll()&&me.mid&&p.salesId!==me.mid?me.mid:"";
-  const items=entries(p).map(([,d])=>d).filter(d=>!mid||d.a1===mid||d.a2===mid);
+  const doer=d=>d.a2&&d.a2!==d.a1?d.a2:d.a1,all=entries(p).map(([,d])=>d),own=mid?all.filter(d=>doer(d)===mid):all,items=own.length?own:all;
   return items.some(d=>isDone(d.status)||(d.status||"Not started")!=="Not started")?"on":"up"}
 function vPipeline(){
   const q=pq.toLowerCase(),hit=p=>!q||((p.client||"")+" "+(p.gd||"")+" "+(p.phone||"")).toLowerCase().includes(q);
@@ -453,8 +453,8 @@ function vDashArch(){
     if(done)a.c++;else if(g.it.every(r=>r.st==="Not started"))a.ns++;else a.q++;
     if(bad)a.bad++;else if(done&&g.it.some(r=>r.res[0]==="Deadline met"))a.ok++});
   const badKey=new Set(Object.entries(grp).filter(([,g])=>g.it.some(r=>r.res[1]==="p-bad")).map(([k])=>k));
-  rs.forEach(r=>{if(r.res[1]!=="p-bad"||!r.lead||r.lead===r.arch)return;const k=r.lead+"|"+r.pid+"|"+r.ph;if(badKey.has(k))return;badKey.add(k);const a=m[r.lead]=m[r.lead]||{p:new Set(),c:0,q:0,ns:0,ok:0,bad:0};a.p.add(r.pid);a.bad++});
-  h+='<div class="card"><h2>Architect performance</h2><div class="mut" style="margin:-6px 0 8px">Each phase of a project counts once per person, even with several work items in it. If a drafter is set, it counts for the drafter; otherwise for the assigned architect. A late or overdue item also counts as late for its project architect. Best performer: most deadlines met, then fewest late or overdue.</div>';
+  rs.forEach(r=>{if(r.res[1]!=="p-bad"||!r.lead||r.lead===r.arch)return;const k=r.lead+"|"+r.pid+"|"+r.ph;if(badKey.has(k))return;badKey.add(k);const a=m[r.lead]=m[r.lead]||{p:new Set(),c:0,q:0,ns:0,ok:0,bad:0};a.bad++});
+  h+='<div class="card"><h2>Architect performance</h2><div class="mut" style="margin:-6px 0 8px">Each phase of a project counts once per person, even with several work items in it. If a drafter is set, the work and the project count only for the drafter, not for the project architect; otherwise for the assigned architect. A late or overdue item still counts as late for its project architect. Best performer: most deadlines met, then fewest late or overdue.</div>';
   const ks=Object.keys(m).sort((x,y)=>m[y].ok-m[x].ok||m[x].bad-m[y].bad||m[y].c-m[x].c||(name(x)||"").localeCompare(name(y)||""));
   const top=ks.length&&m[ks[0]].ok>0?m[ks[0]]:null,isBest=a=>top&&a.ok===top.ok&&a.bad===top.bad&&a.c===top.c;
   h+=ks.length?'<div class="tw"><table><tr><th>Architect</th><th>Projects</th><th>Completed</th><th>In progress</th><th>Not started</th><th>Met</th><th>Late / overdue</th></tr>'+ks.map(k=>{const a=m[k];return '<tr'+(isBest(a)?' class="best"':'')+'><td>'+esc(name(k)||"Removed member")+(isBest(a)?' <span class="pill bestp">★ Best performer</span>':'')+'</td><td>'+a.p.size+'</td><td>'+a.c+'</td><td>'+a.q+'</td><td>'+a.ns+'</td><td>'+a.ok+'</td><td>'+(a.bad?'<span class="pill p-bad">'+a.bad+'</span>':0)+'</td></tr>'}).join("")+'</table></div>':'<div class="mut">Assign architects to deliverables inside a project to see this.</div>';
