@@ -323,7 +323,10 @@ function vMy(mid,preview){mid=mid||me.mid;const m=team[mid];if(!m)return '<div c
   const rs=results().filter(r=>r.arch===mid||r.lead===mid);
   if(rs.length||ARCHRE.test(m.role||"")){const pend=rs.filter(r=>!isDone(r.st)),od=pend.filter(r=>r.res[1]==="p-bad");
     h+='<h2 style="margin-top:16px">Design work</h2><div class="kpis">'+[["Pending",pend.length],["Overdue",od.length],["Completed",rs.filter(r=>isDone(r.st)).length],["Deadlines met",rs.filter(r=>r.res[0]==="Deadline met").length]].map(([l,v])=>'<div class="card kpi"><div class="mut">'+l+'</div><div class="v"'+(l==="Overdue"&&v?' style="color:var(--bad)"':'')+'>'+v+'</div></div>').join("")+'</div>';
-    h+='<div class="card"><b>Pending work</b>'+(pend.length?'<div class="tw"><table><tr><th>Deadline</th><th>Project</th><th>Phase</th><th>Status</th><th></th></tr>'+pend.sort((a,b)=>(a.dl||"9999").localeCompare(b.dl||"9999")).map(r=>'<tr data-editt="'+esc(r.tid)+'" style="cursor:pointer"><td>'+esc(r.dl||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(r.st)+'</td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>').join("")+'</table></div>':'<div class="mut" style="margin-top:6px">Nothing pending.</div>')+'</div>'}
+    const prow2=r=>'<tr data-editt="'+esc(r.tid)+'" style="cursor:pointer"><td>'+esc(r.dl||"—")+'</td><td>'+esc(r.p.client||"")+' <span class="mut">'+esc(r.p.gd||"")+'</span></td><td>'+esc(r.phase)+'</td><td>'+esc(r.st)+'</td><td><span class="pill '+r.res[1]+'">'+r.res[0]+'</span></td></tr>';
+    const byDl=(a,b)=>(a.dl||"9999").localeCompare(b.dl||"9999"),onP=pend.filter(r=>r.st!=="Not started").sort(byDl),upP=pend.filter(r=>r.st==="Not started").sort(byDl),tbl=l=>'<div class="tw"><table><tr><th>Deadline</th><th>Project</th><th>Phase</th><th>Status</th><th></th></tr>'+l.map(prow2).join("")+'</table></div>';
+    h+='<div class="card"><b>Projects on process</b> <span class="pill p-mid">'+onP.length+'</span>'+(onP.length?tbl(onP):'<div class="mut" style="margin-top:6px">No work on process right now.</div>')+'</div>';
+    h+='<div class="card" style="margin-top:10px"><b>Upcoming</b> <span class="pill p-n">'+upP.length+'</span><div class="mut rmk">Not started yet.</div>'+(upP.length?tbl(upP):'<div class="mut" style="margin-top:6px">Nothing waiting to start.</div>')+'</div>';}
   return h}
 function vSalesTeam(){const ids=Object.keys(team).filter(id=>SALESRE.test(team[id].role||"")||Object.values(projects).some(p=>p.salesId===id));
   const st={};ids.forEach(id=>{const x=salesStats(id);x.total=x.L.length;x.conv=x.total?Math.round(x.won/x.total*100):0;st[id]=x});
@@ -395,12 +398,21 @@ const LEADST=["lead","potential","meeting","meetingdone","quotation","negotiatio
 let pview="projects",pfil="ongoing",lopen={};
 function lrow(id,p){const val=pval(p);
   return '<tr class="lrow" data-open="'+esc(id)+'"><td class="lc"><b>'+esc(p.client||"Unnamed client")+'</b><div class="mut">'+esc([p.ptype,p.address].filter(Boolean).join(" · "))+'</div></td><td class="lp'+(p.phone?"":" e")+'" style="white-space:nowrap">'+esc(p.phone||"—")+'</td><td class="lp'+(name(p.salesId)||me.admin?"":" e")+'">'+(me.admin?'<select class="asg" data-assign="'+esc(id)+'">'+opt(people(SALESRE),p.salesId,"Unassigned")+'</select>':esc(name(p.salesId)||"—"))+'</td><td class="lp'+(p.source?"":" e")+'">'+esc(p.source||"—")+'</td><td class="lt'+(p.leadDate?"":" e")+'">'+esc(p.leadDate||"—")+'</td><td class="lv'+(val?"":" e")+'">'+(val?money(val):'<span class="mut">—</span>')+'</td><td class="ln'+((p.stage in DROPAT)?" dropped":"")+'">'+esc(NEXT[p.stage||"lead"]||"")+'</td></tr>'}
+/* A project is "on process" once any of its work has started (or is done); before that it is "upcoming".
+   For someone who only sees their own work, it is judged on the work assigned to them. */
+function projState(p){if(p.stage==="completed")return"on";const mid=!scopeAll()&&me.mid&&p.salesId!==me.mid?me.mid:"";
+  const items=entries(p).map(([,d])=>d).filter(d=>!mid||d.a1===mid||d.a2===mid);
+  return items.some(d=>isDone(d.status)||(d.status||"Not started")!=="Not started")?"on":"up"}
 function vPipeline(){
   const q=pq.toLowerCase(),hit=p=>!q||((p.client||"")+" "+(p.gd||"")+" "+(p.phone||"")).toLowerCase().includes(q);
   const all=visProjects(),isLead=p=>LEADST.includes(p.stage||"lead");
-  const leads=all.filter(([,p])=>isLead(p)),projs=all.filter(([,p])=>!isLead(p));
+  const leads=all.filter(([,p])=>isLead(p)),projAll=all.filter(([,p])=>!isLead(p)),projs=projAll.filter(([,p])=>projState(p)==="on"),upc=projAll.filter(([,p])=>projState(p)==="up");
   let h='<div class="row"><h2 style="margin:0">Pipeline</h2><span class="sp"></span><input id="pq" placeholder="Search client, GD or phone" value="'+esc(pq)+'" style="max-width:240px">'+(me.admin?'<button data-act="goleads">Import from Google Sheet</button>':'')+'<button class="pri" data-act="new">+ New lead</button></div>';
-  h+='<div class="ptabs"><button class="'+(pview==="projects"?"on":"")+'" data-pview="projects">Ongoing projects <b>'+projs.filter(([,p])=>p.stage!=="completed").length+'</b></button><button class="'+(pview==="leads"?"on":"")+'" data-pview="leads">Leads <b>'+leads.filter(([,p])=>!(p.stage in DROPAT)).length+'</b></button></div>';
+  h+='<div class="ptabs"><button class="'+(pview==="projects"?"on":"")+'" data-pview="projects">Ongoing projects <b>'+projs.filter(([,p])=>p.stage!=="completed").length+'</b></button><button class="'+(pview==="upcoming"?"on":"")+'" data-pview="upcoming">Upcoming <b>'+upc.length+'</b></button><button class="'+(pview==="leads"?"on":"")+'" data-pview="leads">Leads <b>'+leads.filter(([,p])=>!(p.stage in DROPAT)).length+'</b></button></div>';
+  if(pview==="upcoming"){h+='<div class="mut" style="margin:4px 0 10px">Projects where no work has started yet'+(scopeAll()?'':' for you')+'. They move to Ongoing projects as soon as a deliverable is set to On process or later.</div>';
+    const list=upc.filter(([,p])=>hit(p)).sort((a,b)=>(nextDeadline(a[1])||"9999").localeCompare(nextDeadline(b[1])||"9999")||(a[1].client||"").localeCompare(b[1].client||""));
+    if(!list.length)return h+'<div class="card empty">No upcoming projects.</div>';
+    return h+'<div class="card plist"><table><thead><tr><th>Client</th><th>Stage</th><th>Next step</th><th>Deliverables</th><th>Value</th><th>Sales</th><th>Next deadline</th></tr></thead><tbody>'+list.map(([id,p])=>prow(id,p)).join("")+'</tbody></table></div>'}
   if(pview==="projects"){
     const cnt=f=>projs.filter(([,p])=>f==="ongoing"?p.stage!=="completed":f==="all"?true:p.stage===f).length;
     h+='<div class="stages">'+[["ongoing","Ongoing"],["locked","Deal locked"],["design","Design phase"],["completed","Completed"]].map(([k,l])=>'<span class="chip'+(pfil===k?" on":"")+'" data-pfil="'+k+'">'+l+'<b>'+cnt(k)+'</b></span>').join("")+'</div>';
