@@ -471,6 +471,8 @@ const SHEETS="Google Sheets";
 let settings={},sy={busy:false,err:"",items:null,at:"",warn:[],form:{url:"",tab:"",tabs:[]},phsel:{}};
 const norm=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
 const gdNorm=s=>String(s||"").toUpperCase().replace(/^\s*GD\b/,"").replace(/[^A-Z0-9]/g,"");
+/* A real GD number has digits. Codes like "GSP" are shared by many clients, so those projects are told apart by client name too. */
+function projKey(gd,client){const g=gdNorm(gd);if(!g)return"";return /\d/.test(g)?g:g+"~"+norm(client)}
 function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return "k"+h.toString(36)}
 function sheetIdOf(u){u=String(u||"").trim();const m=u.match(/\/d\/([a-zA-Z0-9_-]{20,})/);return m?m[1]:(/^[a-zA-Z0-9_-]{20,}$/.test(u)?u:"")}
 function parseDate(s){const m=String(s||"").match(/(\d{1,2})\s*[.\/-]\s*(\d{1,2})\s*[.\/-]\s*(\d{2,4})/);if(!m)return"";let y=m[3];if(y.length===2)y="20"+y;return y+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0")}
@@ -492,7 +494,7 @@ function parseSheet(values,src){const out=[];if(!Array.isArray(values))return ou
   const c={gd:col(/\bgd\b/),client:col(/client/),work:col(/work/),date:col(/delivery/),remark:col(/remark/),sales:col(/sales/),arch:H.findIndex(x=>/architect/.test(x)&&!/assistant/.test(x)),draft:col(/drafting|assistant|visuali/)};
   values.slice(hi+1).forEach(r=>{const g=i=>i>=0?String((r||[])[i]??"").trim():"";const gd=g(c.gd),work=g(c.work).replace(/\s+/g," ");if(!gd||!work)return;
     const a1=person(g(c.arch),ARCHRE),a2=person(g(c.draft),ARCHRE),sl=person(g(c.sales),SALESRE),remark=g(c.remark).replace(/\s*\n\s*/g," "),dateRaw=g(c.date);
-    out.push({src,gd:gd.replace(/^\s*GD\s*/i,"").trim(),gdn:gdNorm(gd),client:g(c.client),work,ph:phaseOf(work),a1:a1.id,a1raw:a1.raw,a2:a2.id,a2raw:a2.raw,sales:sl.id,salesraw:sl.raw,date:parseDate(dateRaw),dateRaw,remark,done:/^\s*done\b/i.test(remark),pendc:/pending from client|client'?s end/i.test(remark)})});
+    out.push({src,gd:gd.replace(/^\s*GD\s*/i,"").trim(),gdn:projKey(gd,g(c.client)),client:g(c.client),work,ph:phaseOf(work),a1:a1.id,a1raw:a1.raw,a2:a2.id,a2raw:a2.raw,sales:sl.id,salesraw:sl.raw,date:parseDate(dateRaw),dateRaw,remark,done:/^\s*done\b/i.test(remark),pendc:/pending from client|client'?s end/i.test(remark)})});
   return out}
 const declined=()=>(settings.declined&&settings.declined.keys)||{};
 const sources=()=>(settings.sync&&settings.sync.sources)||[];
@@ -500,7 +502,7 @@ const monthStart=()=>today().slice(0,8)+"01";
 const curItems=()=>(sy.items||[]).filter(it=>!it.date||it.date>=monthStart());
 function buildProps(){const items=curItems(),seen={},S=[];
   items.forEach(it=>{const k=it.gdn+"|"+it.ph+"|"+it.date+"|"+norm(it.work);if(seen[k])return;seen[k]=1;S.push(it)});
-  const byGd={};Object.entries(projects).forEach(([pid,p])=>{const g=gdNorm(p.gd);if(g)byGd[g]=pid});
+  const byGd={};Object.entries(projects).forEach(([pid,p])=>{const g=projKey(p.gd,p.client);if(g)byGd[g]=pid});
   const groups={};S.forEach(it=>{const k=it.gdn+"|"+it.ph;(groups[k]=groups[k]||[]).push(it)});
   const props=[];
   Object.values(groups).forEach(g=>{const pid=byGd[g[0].gdn]||"",ph=g[0].ph;
@@ -574,7 +576,7 @@ function saveSettings(id,obj){settings[id]=obj;write("settings",id,obj)}
 function acceptProp(p){const it=p.it;
   if(p.kind==="chg"){saveProject(p.pid,pr=>{const d=getP(pr,"del."+p.key);if(!d)return;p.ch.forEach(c=>{d[c[0]]=c[4]})});return true}
   const ph=sy.phsel[p.id]||it.ph;if(!ph)return false;let pid=p.pid;
-  if(!pid){pid="gdp"+it.gdn.toLowerCase();if(!projects[pid]){const now=new Date().toISOString();projects[pid]={client:it.client,gd:it.gd,stage:"design",salesId:it.sales||"",source:"",created:now,updated:now}}}
+  if(!pid){pid="gdp"+it.gdn.toLowerCase().replace(/[^a-z0-9]+/g,"-");if(!projects[pid]){const now=new Date().toISOString();projects[pid]={client:it.client,gd:it.gd,stage:"design",salesId:it.sales||"",source:"",created:now,updated:now}}}
   saveProject(pid,pr=>{pr.del=pr.del||{};(p.its||[it]).forEach(it=>{const k=freeKey(pr,ph);
     pr.del[k]={title:norm(it.work)===norm(SN_P(ph))?"":it.work,a1:it.a1||"",a2:it.a2&&it.a2!==it.a1?it.a2:"",deadline:it.date||"",status:it.done?"Completed":it.pendc?"Client approval pending":"Not started",done:"",remark:[it.done?"":it.remark,!it.date&&it.dateRaw?"Delivery: "+it.dateRaw:"",!it.a1&&it.a1raw?"Architect in sheet: "+it.a1raw:"",!it.a2&&it.a2raw?"Drafting in sheet: "+it.a2raw:""].filter(Boolean).join(" ")}})});
   return true}
