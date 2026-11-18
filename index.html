@@ -302,7 +302,7 @@ const notesFor=mid=>Object.entries(notes).filter(([,n])=>n&&n.to===mid).sort((a,
 const unread=()=>me.mid?notesFor(me.mid).filter(([,n])=>!n.read).length:0;
 function allowed(){return (me.admin?["pipeline","work","dashboard","sheet-sync","team"].concat(me.mid?["my"]:[]):["my","pipeline","work","dashboard","sheet-sync","team"].filter(can)).concat(["process"])}
 function navHtml(v){const own=!scopeAll(),lab={my:"My dashboard",pipeline:own?"My leads & projects":"Pipeline",work:own?"My work":"Work list",dashboard:"Dashboard","sheet-sync":"Sheet sync",team:"Team",process:"How it works"};
-  const n=unread();return allowed().map(k=>'<a href="#'+k+'" class="'+(k===v?"on":"")+'">'+lab[k]+(k==="my"&&n?' <span class="nb">'+n+'</span>':'')+'</a>').join("")+'<span class="who">'+(me.mid?esc(name(me.mid))+(me.admin?' · Admin':'')+' <button class="lo" data-act="chpw">Password</button> <button class="lo" data-act="logout">Log out</button>':me.owner?'Owner · Admin':'')+'</span>'}
+  const n=unread(),sc=syncCounts(),sn=sc.work+sc.leads;return allowed().map(k=>'<a href="#'+k+'" class="'+(k===v?"on":"")+'">'+lab[k]+(k==="my"&&n?' <span class="nb">'+n+'</span>':'')+(k==="sheet-sync"&&sn?' <span class="nb">'+sn+'</span>':'')+'</a>').join("")+'<span class="who">'+(me.mid?esc(name(me.mid))+(me.admin?' · Admin':'')+' <button class="lo" data-act="chpw">Password</button> <button class="lo" data-act="logout">Log out</button>':me.owner?'Owner · Admin':'')+'</span>'}
 let loginErr="";
 function vGate(){return '<div class="card" style="max-width:420px;margin:40px auto"><h2>Log in</h2><div class="mut">Use the ID and password given to you by the admin.</div><form id="loginf"><label class="f">User ID</label><input name="login" autocomplete="username" required><label class="f">Password</label><input name="pw" type="password" autocomplete="current-password" required>'+(loginErr?'<div style="color:var(--bad);font-size:13px;margin-top:8px">'+esc(loginErr)+'</div>':'')+'<div style="margin-top:14px"><button class="pri" style="width:100%">Log in</button></div></form><details style="margin-top:16px"><summary class="mut" style="cursor:pointer">First-time setup (owner only)</summary><div class="mut rmk" style="margin:6px 0">Creates the very first admin account. It gets no access until it is linked to the team in Supabase.</div><form id="setupf"><label class="f">Your email</label><input name="email" type="email" required><label class="f">New password (8+ characters)</label><input name="pw" type="password" minlength="8" required><div style="margin-top:10px"><button style="width:100%">Create owner account</button></div></form></details></div>'}
 function vUnlinked(){const sql="insert into public.team (id, data) values ('owner', jsonb_build_object('name','Saif Kazi','role','CEO','admin',true,'login','"+esc((authUser&&authUser.email)||"")+"','uid','"+esc((authUser&&authUser.id)||"")+"','perms','[]'::jsonb,'scope','all')) on conflict (id) do update set data = public.team.data || excluded.data;";
@@ -332,8 +332,9 @@ function vSalesTeam(){const ids=Object.keys(team).filter(id=>SALESRE.test(team[i
   h+='</div>';
   if(dashAs&&team[dashAs])h+='<div class="card" style="margin-top:10px;border-left:4px solid var(--acc)"><div class="mut">Dashboard of</div><h2>'+esc(team[dashAs].name)+'</h2>'+vMy(dashAs,true)+'</div>';
   return h}
-async function autoLeadCheck(){if(!gReady())return;if(autoChk||!me.ready||!me.admin||!db||!setLoaded||!projLoaded||!leadSrc()||ld.rows!==null||ld.busy||imp.on)return;autoChk=true;
-  const mcp=await getMcp();if(!mcp)return;try{const s=leadSrc(),res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:AG5001"},{cache:false});const rows=parseLeads(payloadOf(res).values);if(rows){ld.rows=rows;ld.at=new Date().toLocaleString();render()}}catch(e){}}
+async function autoLeadCheck(){if(!gReady())return;if(autoChk||!me.ready||!me.admin||!db||!setLoaded||!projLoaded||!leadSrc()||ld.busy||imp.on)return;
+  if(ld.t&&Date.now()-ld.t<AUTO_MS||ld.rows!==null&&view()==="sheet-sync")return;autoChk=true;ld.t=Date.now();
+  const mcp=await getMcp();if(!mcp){autoChk=false;return}try{const s=leadSrc(),res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:AG5001"},{cache:false});const rows=parseLeads(payloadOf(res).values);if(rows){ld.rows=rows;ld.at=new Date().toLocaleString();autoChk=false;render()}}catch(e){}autoChk=false}
 function view(){const h=(location.hash||"").slice(1),ok=allowed();return ok.includes(h)?h:ok[0]}
 function render(){
   deriveTasks();
@@ -346,10 +347,11 @@ function render(){
   if(imp.on&&imp.of)b+='<div class="banner">Importing leads from the sheet: '+imp.n+' of '+imp.of+'. Keep this page open.</div>';
   if(db&&live===true&&!me.ready){$("#app").innerHTML=b+'<div class="banner">Checking your account…</div>';return}
   if(db&&live===true&&!me.mid){$("#nav").innerHTML="";$("#app").innerHTML=b+vUnlinked();return}
-  if(me.admin&&ld.rows!==null&&v2==="pipeline"){const n=buildLeadProps().length;if(n)b+='<div class="banner">'+n+' new or changed leads in the Google Sheet. <a href="#sheet-sync">Review them in Sheet sync</a>.</div>'}
+  if(v2!=="sheet-sync"){const nw=syncCounts();if(nw.work)b+='<div class="banner">'+nw.work+' new work or changes in the Google Sheets. <a href="#sheet-sync">Review them in Sheet sync</a>.</div>';if(nw.leads)b+='<div class="banner">'+nw.leads+' new or changed leads in the Google Sheet. <a href="#sheet-sync">Review them in Sheet sync</a>.</div>'}
   $("#app").innerHTML=b+({pipeline:vPipeline,work:vWork,dashboard:vDash,"sheet-sync":vSync,team:vTeam,process:vProcess,my:()=>vMy()}[v2])();
-  autoLeadCheck();
+  autoLeadCheck();autoWorkCheck();
 }
+function syncCounts(){let work=0,leads=0;try{if(sy.items!==null&&allowed().includes("sheet-sync"))work=buildProps().length}catch(e){}try{if(me.admin&&ld.rows!==null)leads=buildLeadProps().length}catch(e){}return{work,leads}}
 function nextDeadline(p){let best=null;entries(p).forEach(([k,d])=>{if(d.deadline&&!isDone(d.status)&&(!best||d.deadline<best))best=d.deadline});return best}
 const FLOW=["lead","potential","meeting","meetingdone","quotation","negotiation","locked","design","completed"];
 const DROPAT={notpotential:1,notinterested:5};
@@ -543,14 +545,18 @@ async function gCall(params){if(!gReady())throw{code:"no_client"};
 async function getMcp(){return{callTool:async(srv,tool,a)=>{
   if(tool==="get_values")return{payload:await gCall({op:"values",id:a.spreadsheetId,range:a.range})};
   if(tool==="get_spreadsheet")return{payload:await gCall({op:"tabs",id:a.spreadsheetId})};throw{code:"tool_error"}}}}
-async function syncCheck(){if(sy.busy)return;const srcs=sources();if(!srcs.length){sy.err="Add a Google Sheet first.";render();return}
-  sy.busy=true;sy.err="";sy.warn=[];render();
+async function syncCheck(silent){if(sy.busy)return;const srcs=sources();if(!srcs.length){if(!silent){sy.err="Add a Google Sheet first.";render()}return}
+  sy.busy=true;sy.t=Date.now();if(!silent){sy.err="";sy.warn=[];render()}const warn=[];
   const mcp=await getMcp();if(!mcp){sy.busy=false;sy.err="Google Sheets is not set up yet.";render();return}
   const all=[];let fail=0,lastErr=null;
-  for(const s of srcs){try{const res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:L1000"},{cache:false});
-      const rows=parseSheet(payloadOf(res).values,s.tab);if(rows===null)sy.warn.push('"'+s.tab+'": no header row with GD NO. and Work List was found.');else all.push(...rows)}
-    catch(e){fail++;lastErr=e;sy.warn.push('"'+s.tab+'": '+mcpMsg(e))}}
-  sy.busy=false;if(fail===srcs.length){sy.err=mcpMsg(lastErr);sy.warn=[]}else{sy.items=all;sy.at=new Date().toLocaleString()}render()}
+  for(const s of srcs){try{const res=await mcp.callTool(SHEETS,"get_values",{spreadsheetId:s.sid,range:"'"+String(s.tab).replace(/'/g,"''")+"'!A1:Z5000"},{cache:false});
+      const rows=parseSheet(payloadOf(res).values,s.tab);if(rows===null)warn.push('"'+s.tab+'": no header row with GD NO. and Work List was found.');else all.push(...rows)}
+    catch(e){fail++;lastErr=e;warn.push('"'+s.tab+'": '+mcpMsg(e))}}
+  sy.busy=false;if(fail===srcs.length){if(!silent){sy.err=mcpMsg(lastErr);sy.warn=[]}}else{sy.err="";sy.warn=warn;sy.items=all;sy.at=new Date().toLocaleString()}render()}
+/* Automatic check: on opening the app and every few minutes, so new work in the sheets shows up without tapping Check sheets. */
+const AUTO_MS=5*60*1000;
+function autoWorkCheck(){if(!gReady()||!db||!setLoaded||!projLoaded||!me.mid&&!me.owner||sy.busy||!sources().length||!allowed().includes("sheet-sync"))return;
+  if(sy.t&&Date.now()-sy.t<AUTO_MS||sy.items!==null&&view()==="sheet-sync")return;syncCheck(true)}
 async function loadTabs(){const sid=sheetIdOf(sy.form.url);if(!sid){sy.err="Paste a Google Sheets link first.";render();return}
   sy.busy=true;sy.err="";render();const mcp=await getMcp();if(!mcp){sy.busy=false;sy.err=mcpMsg({code:"capability_disabled"});render();return}
   try{const res=await mcp.callTool(SHEETS,"get_spreadsheet",{spreadsheetId:sid,fields:["sheets.properties.title"]},{cache:false});
@@ -567,7 +573,7 @@ function acceptProp(p){const it=p.it;
 function declineProp(id){const k=Object.assign({},declined());k[id]=1;saveSettings("declined",{keys:k})}
 function vSyncWork(){const srcs=sources();
   let h='<div class="row"><h2 style="margin:0">Sheet sync</h2><span class="sp"></span><button class="pri" data-act="synccheck"'+(sy.busy?" disabled":"")+'>'+(sy.busy?"Checking…":"Check sheets")+'</button></div>';
-  h+='<div class="mut" style="margin:4px 0 10px">Reads your Google Sheets and lists new work and changes. Nothing changes in the app until you accept it. Only rows with a delivery date in the current month or later are checked. A phase that already exists in a project is never listed as new work.</div>';
+  h+='<div class="mut" style="margin:4px 0 10px">Reads your Google Sheets and lists new work and changes. Nothing changes in the app until you accept it. The app also checks by itself when it opens and every 5 minutes, and shows a notice on every page when something new turns up. Only rows with a delivery date in the current month or later are checked. A phase that already exists in a project is never listed as new work.</div>';
   if(sy.err)h+='<div class="banner" style="background:var(--badbg);color:var(--bad)">'+esc(sy.err)+'</div>';
   sy.warn.forEach(w=>{h+='<div class="banner">'+esc(w)+'</div>'});
   h+='<div class="card"><b>Sheets to read</b>';
@@ -898,6 +904,8 @@ document.addEventListener("drop",e=>{const c=e.target.closest&&e.target.closest(
   if(p&&p.stage!==c.dataset.drop){p.stage=c.dataset.drop;p.updated=new Date().toISOString();write("projects",dragId,p);toast((p.client||"Project")+" → "+SN[p.stage])}dragId=null;render()});
 window.addEventListener("hashchange",render);
 init();
+setInterval(()=>{if(!document.hidden){autoWorkCheck();autoLeadCheck()}},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){autoWorkCheck();autoLeadCheck()}});
 </script>
 </body>
 </html>
